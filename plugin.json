@@ -1,0 +1,20 @@
+{
+    "version": "0.0.1",
+    "pluginName": "查找软件包",
+    "description": "查找软件包",
+    "author": "Ben",
+    "homepage": "https://u.tools",
+    "preload": "preload.js",
+    "logo": "logo.png",
+    "features": [{
+      "platform": ["darwin", "win32"],
+      "code": "shortcuts",
+      "explain": "查找快捷键",
+      "cmds": [
+        "软件包",
+        "seach",
+        "sw",
+        "software"
+      ]
+    }]
+  }
