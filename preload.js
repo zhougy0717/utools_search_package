@@ -2,31 +2,59 @@
 const { exec, spawn } = require('child_process');
 const mousetrap = require('mousetrap')
 const util = require('util')
-const execPromise = util.promisify(exec);
-execCmd = async cmd => {
-  let result = []
-  try {
-    // const { stdout, stderr } = await execPromise(cmd);
-    exec (cmd, (error, stdout, stderr) => {
-      if (error) {
-        console.log(`${error}`)
-        return
-      }
-      const pkgs = stdout.split('\n').filter(word => !/^\s*$/.test(word))
-      pkgs.forEach(pkg => {
-        result.push({
-          title: pkg
-        })
-      })
+// const execPromise = util.promisify(exec);
+// 触发命令，记录命令输出
+// 当有数据到达时，合入命令输出，并按照\n切割
+// 当close状态到达时，输出所有的信息
+// 选择item时，复制对应的文本
+// 最后添加一项，复制所有文本
+
+updateOutput = (existingOutput, data) => {
+  let items = []
+  const output = existingOutput + data
+  let lines = output.split("\n")
+  const strippedLines = lines.filter(x => !/^\s*$/.test(x))
+  strippedLines.forEach(line => {
+    items.push({
+      title: line,
+      description: "选中后执行安装",
     })
-    
-  } catch (error) {
-    console.error('执行出错：', error);
-    result = [{
-      title: error.stderr,
-    }]
-  }
-  return result
+  })
+  return items
+}
+outputItems = () => {
+
+}
+
+setupCmdCbs = () => {}
+execCmd = async (cmd, cb) => {
+  let output = ""
+  let items = []
+  let args = cmd.split(" ")
+  let cmdHandle = spawn (args[0], args.slice(1))
+  
+  cmdHandle.stdout.on('data', (data) => {
+    items = updateOutput(output, data)
+    cb(items)
+  })
+  cmdHandle.stderr.on('data', (data) => {
+    items = updateOutput(output, data)
+    cb(items)
+  })
+  cmdHandle.on('close', (code) => {
+    if (code == 0) {
+      items.push({
+        title:'命令成功退出, 复制全部行'
+      })
+      cb(items)
+    }
+  })
+  cmdHandle.on('error', (err) =>{
+    items.push({
+      title:`命令结束, 错误码 ${err.code} (${err.errno})`
+    })
+    cb(items)
+  })
 }
 
 window.exports = {
@@ -38,8 +66,8 @@ window.exports = {
       },
       search: (action, searchWord, callbackSetList) => {
         mousetrap.bind('enter', async () => {
-          const itemList = await execCmd(searchWord)
-          return callbackSetList(itemList)
+          await execCmd(searchWord, callbackSetList)
+          return 0
         })
         
       },
