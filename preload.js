@@ -43,11 +43,19 @@ execCmd = async (cmd, cb) => {
   })
   cmdHandle.on('close', (code) => {
     if (code == 0) {
-      items.push({
+      items.unshift({
         title:'命令成功退出, 复制全部行'
       })
-      cb(items)
     }
+    else {
+      items.forEach(x => {
+        x.description = "点击复制文本"
+      })
+      items.unshift({
+        title:`命令错误退出, 错误码 ${code}`
+      })
+    }
+    cb(items)
   })
   cmdHandle.on('error', (err) =>{
     items.push({
@@ -62,6 +70,12 @@ window.exports = {
     mode: 'list',
     args: {
       enter: (action, callbackSetList) => {
+        if(utools.isMacOs() || utools.isLinux()) {
+          process.env.PATH = '/usr/local/bin:~/bin:~/tools/bin:' + process.env.PATH
+        }
+        else if (utools.isWindows()) {
+          process.env.PATH = '~/tools/bin;' + process.env.PATH
+        }
         return callbackSetList([])
       },
       search: (action, searchWord, callbackSetList) => {
