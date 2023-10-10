@@ -16,52 +16,70 @@ updateOutput = (existingOutput, data) => {
   const strippedLines = lines.filter(x => !/^\s*$/.test(x))
   strippedLines.forEach(line => {
     items.push({
-      title: line,
-      description: "选中后执行安装",
+      title: line
     })
   })
-  return items
-}
-outputItems = () => {
-
+  return [output, items]
 }
 
-setupCmdCbs = () => {}
-execCmd = async (cmd, cb) => {
-  let output = ""
-  let items = []
-  let args = cmd.split(" ")
-  let cmdHandle = spawn (args[0], args.slice(1))
-  
-  cmdHandle.stdout.on('data', (data) => {
-    items = updateOutput(output, data)
-    cb(items)
-  })
-  cmdHandle.stderr.on('data', (data) => {
-    items = updateOutput(output, data)
-    cb(items)
-  })
-  cmdHandle.on('close', (code) => {
-    if (code == 0) {
-      items.unshift({
-        title:'命令成功退出, 复制全部行'
+updateResult = (args, code, items, setList) => {
+  if (code == 0) {
+    if (args.length >= 2 && args[1] === 'search') {
+      items.forEach(x => {
+        x.description = "选中后执行安装"
+        x.icon = 'icons/install.png'
+        x.action = 'install'
       })
     }
     else {
       items.forEach(x => {
-        x.description = "点击复制文本"
+        x.description = "点击复制本行日志"
+        x.icon = 'icons/log.png'
+        x.action = 'copy'
       })
       items.unshift({
-        title:`命令错误退出, 错误码 ${code}`
+        title:'命令成功退出, 复制全部日志行',
+        icon: 'icons/ok.png'
       })
     }
-    cb(items)
-  })
-  cmdHandle.on('error', (err) =>{
-    items.push({
-      title:`命令结束, 错误码 ${err.code} (${err.errno})`
+  }
+  else {
+    items.forEach(x => {
+      x.description = "点击复制本行日志"
+      x.icon = 'icons/log.png'
+      x.action = 'copy'
     })
-    cb(items)
+    items.unshift({
+      title:`命令错误退出, 错误码 ${code}`,
+      icon: 'icons/error.png'
+    })
+  }
+  setList(items)
+}
+
+let g_items = []
+const stateMachine = require('./state_machine.js')
+execCmd = async (cmd, cb) => {
+  let output = ""
+  let items = []
+  let args = cmd.split(" ")
+  if (args.length < 1 || /^\s*$/.test(args[0])) {
+    return
+  }
+  let cmdHandle = spawn (args[0], args.slice(1))
+  cmdHandle.stdout.on('data', (data) => {
+    [output, items] = updateOutput(output, data)
+  })
+  cmdHandle.stderr.on('data', (data) => {
+    [output, items] = updateOutput(output, data)
+  })
+  cmdHandle.on('close', (code) => {
+    updateResult(args, code, items, cb)
+    g_items = items
+    stateMachine.updateState('done', async() => {
+      utools.setSubInputValue('')
+      utools.setSubInput(()=>{}, '搜索列表项,使用ctrl+e,回到命令输入模式', true)
+    })      
   })
 }
 
@@ -76,25 +94,36 @@ window.exports = {
         else if (utools.isWindows()) {
           process.env.PATH = '~/tools/bin;' + process.env.PATH
         }
+        utools.setSubInputValue('输入命令以执行')
         return callbackSetList([])
       },
       search: (action, searchWord, callbackSetList) => {
         mousetrap.bind('enter', async () => {
-          await execCmd(searchWord, callbackSetList)
-          return 0
+          await stateMachine.updateState('execute', async ()=>{
+            await execCmd(searchWord, callbackSetList)
+          })       
         })
-        
+        mousetrap.bind('ctrl+e', async () => {
+          stateMachine.updateState('reset', async () => {
+            utools.setSubInput(()=>{}, '输入命令以执行', true)
+            utools.setSubInputValue('')
+            g_items = []
+            callbackSetList([])
+          })
+        })
+        stateMachine.updateState('type', async () => {
+            const filtered = g_items.filter(x => {
+              return x.title.includes(searchWord)
+            })
+            callbackSetList(filtered)
+        })
       },
-      // select: (action, itemData) => {
-      //   Mousetrap.bind('enter', async () => {
-      //     var icons = await search(searchWord);
-      //     callbackSetList(icons)
-      //     return false
-      // });
-      //   const cmd = itemData.title
-      //   );
-      // },
-      placeholder: "搜索快捷键，回车直接执行（部分需要手动执行）"
+      select: (action, itemData) => {
+        if (itemData.action === 'fail') {
+          utools.copyText(itemData.title);
+        }
+      },
+      placeholder: "输入命令以执行"
     }
   }
 }
