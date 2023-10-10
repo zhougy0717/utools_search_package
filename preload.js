@@ -2,30 +2,24 @@
 const { exec, spawn } = require('child_process');
 const mousetrap = require('mousetrap')
 const util = require('util')
-// const execPromise = util.promisify(exec);
-// 触发命令，记录命令输出
-// 当有数据到达时，合入命令输出，并按照\n切割
-// 当close状态到达时，输出所有的信息
-// 选择item时，复制对应的文本
-// 最后添加一项，复制所有文本
 
-updateOutput = (existingOutput, data) => {
+asItems = (text) => {
   let items = []
-  const output = existingOutput + data
-  let lines = output.split("\n")
+  let lines = text.split("\n")
   const strippedLines = lines.filter(x => !/^\s*$/.test(x))
   strippedLines.forEach(line => {
     items.push({
       title: line
     })
   })
-  return [output, items]
+  return items
 }
 
-updateResult = (code, items, setList) => {
+updateResult = (code, output) => {
+  const items = asItems(output)
   if (code == 0) {
     items.forEach(x => {
-      x.description = "选中后执行安装"
+      x.description = "点击复制安装命令"
       x.icon = 'icons/install.png'
       x.action = 'install'
     })
@@ -41,31 +35,25 @@ updateResult = (code, items, setList) => {
       icon: 'icons/error.png'
     })
   }
-  setList(items)
+  return items
 }
 
 let g_items = []
 const stateMachine = require('./state_machine.js')
 execCmd = async (package, cb) => {
   let output = ""
-  let items = []
-  // let args = cmd.split(" ")
-  // if (args.length < 1 || /^\s*$/.test(args[0])) {
-  //   return
-  // }
   let cmdHandle = spawn ('brew', ['search', package])
   cmdHandle.stdout.on('data', (data) => {
-    [output, items] = updateOutput(output, data)
+    output = output + data
   })
   cmdHandle.stderr.on('data', (data) => {
-    [output, items] = updateOutput(output, data)
+    output = output + data
   })
   cmdHandle.on('close', (code) => {
-    updateResult(code, items, cb)
-    g_items = items
+    g_items = updateResult(code, output)
+    cb(g_items)
     stateMachine.updateState('done', async() => {
       utools.setSubInputValue('')
-      utools.setSubInput(()=>{}, '搜索列表项,使用ctrl+e,回到命令输入模式', true)
     })      
   })
 }
@@ -92,7 +80,6 @@ window.exports = {
         })
         mousetrap.bind('ctrl+e', async () => {
           stateMachine.updateState('reset', async () => {
-            utools.setSubInput(()=>{}, '输入命令以执行', true)
             utools.setSubInputValue('')
             g_items = []
             callbackSetList([])
@@ -106,11 +93,17 @@ window.exports = {
         })
       },
       select: (action, itemData) => {
-        if (itemData.action === 'fail') {
+        if (itemData.action === 'copy') {
           utools.copyText(itemData.title);
         }
+        else if (itemData.action == 'install') {
+          const cmd = 'brew install ' + itemData.title
+          utools.copyText('brew install ' + itemData.title);
+          window.utools.showNotification("安装命令已复制\n" + cmd)
+          window.utools.hideMainWindow()
+        }
       },
-      placeholder: "输入命令以执行"
+      placeholder: "搜索软件包，输入ctrl+e可以重新搜索"
     }
   }
 }
