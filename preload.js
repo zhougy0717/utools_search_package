@@ -22,26 +22,13 @@ updateOutput = (existingOutput, data) => {
   return [output, items]
 }
 
-updateResult = (args, code, items, setList) => {
+updateResult = (code, items, setList) => {
   if (code == 0) {
-    if (args.length >= 2 && args[1] === 'search') {
-      items.forEach(x => {
-        x.description = "选中后执行安装"
-        x.icon = 'icons/install.png'
-        x.action = 'install'
-      })
-    }
-    else {
-      items.forEach(x => {
-        x.description = "点击复制本行日志"
-        x.icon = 'icons/log.png'
-        x.action = 'copy'
-      })
-      items.unshift({
-        title:'命令成功退出, 复制全部日志行',
-        icon: 'icons/ok.png'
-      })
-    }
+    items.forEach(x => {
+      x.description = "选中后执行安装"
+      x.icon = 'icons/install.png'
+      x.action = 'install'
+    })
   }
   else {
     items.forEach(x => {
@@ -59,14 +46,14 @@ updateResult = (args, code, items, setList) => {
 
 let g_items = []
 const stateMachine = require('./state_machine.js')
-execCmd = async (cmd, cb) => {
+execCmd = async (package, cb) => {
   let output = ""
   let items = []
-  let args = cmd.split(" ")
-  if (args.length < 1 || /^\s*$/.test(args[0])) {
-    return
-  }
-  let cmdHandle = spawn (args[0], args.slice(1))
+  // let args = cmd.split(" ")
+  // if (args.length < 1 || /^\s*$/.test(args[0])) {
+  //   return
+  // }
+  let cmdHandle = spawn ('brew', ['search', package])
   cmdHandle.stdout.on('data', (data) => {
     [output, items] = updateOutput(output, data)
   })
@@ -74,7 +61,7 @@ execCmd = async (cmd, cb) => {
     [output, items] = updateOutput(output, data)
   })
   cmdHandle.on('close', (code) => {
-    updateResult(args, code, items, cb)
+    updateResult(code, items, cb)
     g_items = items
     stateMachine.updateState('done', async() => {
       utools.setSubInputValue('')
@@ -84,7 +71,7 @@ execCmd = async (cmd, cb) => {
 }
 
 window.exports = {
-  'shortcuts': {
+  'searchPackage': {
     mode: 'list',
     args: {
       enter: (action, callbackSetList) => {

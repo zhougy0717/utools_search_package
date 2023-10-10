@@ -8,13 +8,10 @@
     "logo": "logo.png",
     "features": [{
       "platform": ["darwin", "win32"],
-      "code": "shortcuts",
-      "explain": "查找快捷键",
+      "code": "searchPackage",
+      "explain": "搜索软件包",
       "cmds": [
-        "软件包",
-        "seach",
-        "sw",
-        "software"
+        "brew"
       ]
     }]
   }
