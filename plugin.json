@@ -7,11 +7,18 @@
     "preload": "preload.js",
     "logo": "logo.png",
     "features": [{
-      "platform": ["darwin", "win32"],
-      "code": "searchPackage",
-      "explain": "搜索软件包",
-      "cmds": [
-        "brew"
-      ]
+        "platform": ["darwin"],
+        "code": "brew",
+        "explain": "搜索软件包",
+        "cmds": [
+            "brew"
+        ]
+    }, {
+        "platform": ["windows"],
+        "code": "choco",
+        "explain": "搜索软件包",
+        "cmds": [
+        "choco"
+        ]
     }]
   }
