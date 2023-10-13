@@ -5,7 +5,7 @@
     "author": "Ben",
     "homepage": "https://u.tools",
     "preload": "preload.js",
-    "logo": "logo.png",
+    "logo": "icons/logo.png",
     "features": [{
         "platform": ["darwin"],
         "code": "brew",
@@ -13,12 +13,6 @@
         "cmds": [
             "brew"
         ]
-    }, {
-        "platform": ["windows"],
-        "code": "choco",
-        "explain": "搜索软件包",
-        "cmds": [
-        "choco"
-        ]
     }]
+
   }

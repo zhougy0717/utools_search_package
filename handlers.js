@@ -2,6 +2,10 @@ const { exec, spawn } = require('child_process');
 const mousetrap = require('mousetrap')
 const util = require('util')
 
+let g_items = []
+const stateMachine = require('./state_machine.js')
+const g_pkgmgrs = require('./package_managers.js')
+
 asItems = (text) => {
   let items = []
   let lines = text.split("\n")
@@ -14,8 +18,7 @@ asItems = (text) => {
   return items
 }
 
-updateResult = (code, output) => {
-  const items = asItems(output)
+updateResult = (code, items) => {
   if (code == 0) {
     items.forEach(x => {
       x.description = "点击复制安装命令"
@@ -37,15 +40,7 @@ updateResult = (code, output) => {
   return items
 }
 
-let g_items = []
-const stateMachine = require('./state_machine.js')
-const g_cmdArgs = {
-  brew: {
-    install: ['install'],
-    search: ['search']
-  }
-}
-execCmd = async (args, package, cb) => {
+execCmd = async (args, cb, pkgmgr) => {
   let output = ""
   let cmdHandle = spawn (args[0], args.slice(1))
   cmdHandle.stdout.on('data', (data) => {
@@ -55,7 +50,8 @@ execCmd = async (args, package, cb) => {
     output = output + data
   })
   cmdHandle.on('close', (code) => {
-    g_items = updateResult(code, output)
+    const items = pkgmgr.handleCmdOutput(output)
+    g_items = updateResult(code, items)
     cb(g_items)
     stateMachine.updateState('done', async() => {
       utools.setSubInputValue('')
@@ -65,31 +61,30 @@ execCmd = async (args, package, cb) => {
 
 enterHandler = (action, callbackSetList) => {
     if(utools.isMacOs() || utools.isLinux()) {
-      process.env.PATH = '/usr/local/bin:~/bin:~/tools/bin:' + process.env.PATH
+        process.env.PATH = '/usr/local/bin:~/bin:~/tools/bin:' + process.env.PATH
     }
     else if (utools.isWindows()) {
-      process.env.PATH = '~/tools/bin;' + process.env.PATH
+        process.env.PATH = '~/tools/bin;' + process.env.PATH
     }
     utools.setSubInputValue('输入命令以执行')
     return callbackSetList([])
-  }
+}
 
-  searchHandler = (action, searchWord, callbackSetList) => {
+searchHandler = (action, searchWord, callbackSetList) => {
     const mgrCmd = action.code
-    if (! action.code in g_cmdArgs) {
+    if (! mgrCmd in g_pkgmgrs) {
       return
     }
     if (/^\s*$/.test(searchWord)) {
       return
     }
-    const searchCmdArgs = [
-      mgrCmd,
-      g_cmdArgs[mgrCmd]['search'],
-      searchWord
-    ]
+    const pkgmgr = g_pkgmgrs[mgrCmd]
+    const subcmdArgs = pkgmgr.subcmdArgs('search')
+    let searchCmdArgs = [mgrCmd]
+    searchCmdArgs = searchCmdArgs.concat(subcmdArgs).concat([searchWord])
     mousetrap.bind('enter', async () => {
       await stateMachine.updateState('execute', async ()=>{
-        await execCmd(searchCmdArgs, searchWord, callbackSetList)
+        await execCmd(searchCmdArgs, callbackSetList, pkgmgr)
       })       
     })
     mousetrap.bind('ctrl+e', async () => {
@@ -105,23 +100,23 @@ enterHandler = (action, callbackSetList) => {
         })
         callbackSetList(filtered)
     })
-  }
+}
 
-  selectHandler = (action, itemData) => {
+selectHandler = (action, itemData) => {
     if (itemData.action === 'copy') {
       utools.copyText(itemData.title);
     }
     else if (itemData.action == 'install') {
       const mgrCmd = action.code
-      if (! mgrCmd in g_cmdArgs) {
+      if (! mgrCmd in g_pkgmgrs) {
         return
       }
-      const args = g_cmdArgs[mgrCmd]['install']
+      const args = g_pkgmgrs[mgrCmd].subcmdArgs('install')
       const installCmd = action.code + ' ' + args.join(' ') + ' ' + itemData.title
       utools.copyText(installCmd);
       window.utools.showNotification("安装命令已复制\n" + installCmd)
       window.utools.hideMainWindow()
     }
-  }
+}
 
-  module.exports = {enterHandler, searchHandler, selectHandler}
+module.exports = {enterHandler, searchHandler, selectHandler}

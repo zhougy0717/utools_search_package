@@ -3,7 +3,8 @@ const stateTable = {
         execute: "executing"
     },
     executing: {
-        done: "filtering"
+        done: "filtering",
+        reset: "command"
     },
     filtering: {
         reset: "command",
