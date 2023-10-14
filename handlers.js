@@ -1,6 +1,7 @@
 const { exec, spawn } = require('child_process');
 const mousetrap = require('mousetrap')
 const util = require('util')
+const Nanobar = require('nanobar')
 const { cmdHandler } = require('./command_handlers.js')
 
 let g_items = []
@@ -43,14 +44,39 @@ asItem = (output) => {
     return items
 }
 
+initBar = () => {
+    var nanobar = new Nanobar();
+    document.getElementById('nanobarcss').innerHTML = `
+    .nanobar {
+        width:100%;
+        height:1px;
+        z-index:99999;
+        top:0
+    }
+    .bar {
+        width:0;
+        height:100%;
+        transition:height .3s;
+        background-image: linear-gradient(to top, #37ecba 0%, #72afd3 100%)
+    }`
+    return nanobar
+}
+
 execCmd = async (args, cb, pkgmgr) => {
+  let nanobar = initBar()
   let output = ""
   let cmdHandle = spawn (args[0], args.slice(1))
+  let progress = 10
+  nanobar.go(progress)
   cmdHandle.stdout.on('data', (data) => {
     output = output + data
+    progress += 10
+    nanobar.go(progress)
   })
   cmdHandle.stderr.on('data', (data) => {
     output = output + data
+    progress += 10
+    nanobar.go(progress)
   })
   cmdHandle.on('close', (code) => {
     let items;
@@ -64,7 +90,8 @@ execCmd = async (args, cb, pkgmgr) => {
     cb(g_items)
     stateMachine.updateState('done', async() => {
       utools.setSubInputValue('')
-    })      
+    })
+    nanobar.go(100)    
   })
 }
 

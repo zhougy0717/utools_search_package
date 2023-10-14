@@ -4,6 +4,7 @@
   "requires": true,
   "packages": {},
   "dependencies": {
-    "mousetrap": "^1.6.5"
+    "mousetrap": "^1.6.5",
+    "nanobar": "^0.4.2"
   }
 }
