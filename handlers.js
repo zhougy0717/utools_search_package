@@ -60,13 +60,19 @@ execCmd = async (args, cb, pkgmgr) => {
 }
 
 enterHandler = (action, callbackSetList) => {
+    const mgrCmd = action.code
+    if (! mgrCmd in g_pkgmgrs) {
+      return
+    }
     if(utools.isMacOs() || utools.isLinux()) {
         process.env.PATH = '/usr/local/bin:~/bin:~/tools/bin:' + process.env.PATH
     }
     else if (utools.isWindows()) {
         process.env.PATH = '~/tools/bin;' + process.env.PATH
     }
-    utools.setSubInputValue('输入命令以执行')
+    const pkgmgr = g_pkgmgrs[mgrCmd]
+    pkgmgr.enter()
+    stateMachine.updateState('command', async () => {})
     return callbackSetList([])
 }
 

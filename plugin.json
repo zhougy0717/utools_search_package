@@ -13,6 +13,21 @@
         "cmds": [
             "brew"
         ]
+    }, 
+    {
+        "platform": ["windows"],
+        "code": "choco",
+        "explain": "搜索软件包",
+        "cmds": [
+        "choco"
+        ]
+    },
+    {
+        "platform": ["darwin", "windows", "linux"],
+        "code": "npm",
+        "explain": "搜索软件包",
+        "cmds": [
+        "npm"
+        ]
     }]
-
   }
