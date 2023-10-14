@@ -1,7 +1,5 @@
 
 enterHandler = () => {
-    process.env.PATH = '/Users/guangyu/.nvm/versions/node/v16.14.0/bin/:' + process.env.PATH
-    console.log("entering")
 }
 searchHandler = (output) => {
     const lines = output.split('\n')

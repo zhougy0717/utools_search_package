@@ -1,6 +1,7 @@
 const { exec, spawn } = require('child_process');
 const mousetrap = require('mousetrap')
 const util = require('util')
+const { cmdHandler } = require('./command_handlers.js')
 
 let g_items = []
 const stateMachine = require('./state_machine.js')
@@ -89,6 +90,11 @@ searchHandler = (action, searchWord, callbackSetList) => {
     let searchCmdArgs = [mgrCmd]
     searchCmdArgs = searchCmdArgs.concat(subcmdArgs).concat([searchWord])
     mousetrap.bind('enter', async () => {
+      if (searchWord.startsWith(':') || searchWord.startsWith('：')) {
+        cmdHandler(searchWord.slice(1))
+        utools.setSubInputValue('')
+        return
+      }
       await stateMachine.updateState('execute', async ()=>{
         await execCmd(searchCmdArgs, callbackSetList, pkgmgr)
       })       
