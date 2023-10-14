@@ -7,18 +7,6 @@ let g_items = []
 const stateMachine = require('./state_machine.js')
 const g_pkgmgrs = require('./package_managers.js')
 
-asItems = (text) => {
-  let items = []
-  let lines = text.split("\n")
-  const strippedLines = lines.filter(x => !/^\s*$/.test(x))
-  strippedLines.forEach(line => {
-    items.push({
-      title: line
-    })
-  })
-  return items
-}
-
 updateResult = (code, items) => {
   if (code == 0) {
     items.forEach(x => {
@@ -41,6 +29,20 @@ updateResult = (code, items) => {
   return items
 }
 
+asItem = (output) => {
+    let lines = output.split('\n')
+    let items = []
+    lines = lines.filter(x => {
+        return ! /^\s*$/.test(x)
+    })
+    lines.forEach(x => {
+        items.push({
+            title: x
+        })
+    })
+    return items
+}
+
 execCmd = async (args, cb, pkgmgr) => {
   let output = ""
   let cmdHandle = spawn (args[0], args.slice(1))
@@ -51,7 +53,13 @@ execCmd = async (args, cb, pkgmgr) => {
     output = output + data
   })
   cmdHandle.on('close', (code) => {
-    const items = pkgmgr.handleCmdOutput(output)
+    let items;
+    if (code == 0) {
+        items = pkgmgr.handleCmdOutput(output)
+    }
+    else {
+        items = asItem(output)
+    }
     g_items = updateResult(code, items)
     cb(g_items)
     stateMachine.updateState('done', async() => {
@@ -73,7 +81,7 @@ enterHandler = (action, callbackSetList) => {
     }
     const pkgmgr = g_pkgmgrs[mgrCmd]
     pkgmgr.enter()
-    stateMachine.updateState('command', async () => {})
+    stateMachine.updateState('reset', async () => {})
     return callbackSetList([])
 }
 
@@ -83,7 +91,8 @@ searchHandler = (action, searchWord, callbackSetList) => {
       return
     }
     if (/^\s*$/.test(searchWord)) {
-      return
+        callbackSetList(g_items)
+        return
     }
     const pkgmgr = g_pkgmgrs[mgrCmd]
     const subcmdArgs = pkgmgr.subcmdArgs('search')
@@ -117,6 +126,7 @@ searchHandler = (action, searchWord, callbackSetList) => {
 selectHandler = (action, itemData) => {
     if (itemData.action === 'copy') {
       utools.copyText(itemData.title);
+      window.utools.showNotification("错误日志已复制\n")
     }
     else if (itemData.action == 'install') {
       const mgrCmd = action.code
@@ -127,8 +137,8 @@ selectHandler = (action, itemData) => {
       const installCmd = action.code + ' ' + args.join(' ') + ' ' + itemData.title
       utools.copyText(installCmd);
       window.utools.showNotification("安装命令已复制\n" + installCmd)
-      window.utools.hideMainWindow()
     }
+    window.utools.hideMainWindow()
 }
 
 module.exports = {enterHandler, searchHandler, selectHandler}

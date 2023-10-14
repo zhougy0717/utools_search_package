@@ -19,4 +19,8 @@ async function updateState (trigger, action) {
     }
 }
 
-module.exports = {updateState}
+getState = () => {
+    return g_mode
+}
+
+module.exports = {updateState, getState}
