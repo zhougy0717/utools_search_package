@@ -14,7 +14,8 @@ searchHandler = (text) => {
 
 const g_subCmds = {
     install: ['install'],
-    search: ['search']
+    search: ['search'],
+    list: ['list']
 }
 
 getSubCmd = (type) => {

@@ -2,10 +2,10 @@ const { exec, spawn } = require('child_process');
 const mousetrap = require('mousetrap')
 const util = require('util')
 const Nanobar = require('nanobar')
-const { cmdHandler } = require('./command_handlers.js')
+const { cmdHandler } = require('./command.js')
 
 let g_items = []
-const stateMachine = require('./state_machine.js')
+const g_stateMachine = require('./state_machine.js')
 const g_pkgmgrs = require('./package_managers.js')
 
 updateResult = (code, items) => {
@@ -65,20 +65,20 @@ initBar = () => {
 execCmd = async (args, cb, pkgmgr) => {
   let nanobar = initBar()
   let output = ""
-  let cmdHandle = spawn (args[0], args.slice(1))
+  let cmdProc = spawn (args[0], args.slice(1))
   let progress = 10
   nanobar.go(progress)
-  cmdHandle.stdout.on('data', (data) => {
+  cmdProc.stdout.on('data', (data) => {
     output = output + data
     progress += 10
     nanobar.go(progress)
   })
-  cmdHandle.stderr.on('data', (data) => {
+  cmdProc.stderr.on('data', (data) => {
     output = output + data
     progress += 10
     nanobar.go(progress)
   })
-  cmdHandle.on('close', (code) => {
+  cmdProc.on('close', (code) => {
     let items;
     if (code == 0) {
         items = pkgmgr.handleCmdOutput(output)
@@ -88,7 +88,7 @@ execCmd = async (args, cb, pkgmgr) => {
     }
     g_items = updateResult(code, items)
     cb(g_items)
-    stateMachine.updateState('done', async() => {
+    g_stateMachine.updateState('done', async() => {
       utools.setSubInputValue('')
     })
     nanobar.go(100)    
@@ -108,7 +108,7 @@ enterHandler = (action, callbackSetList) => {
     }
     const pkgmgr = g_pkgmgrs[mgrCmd]
     pkgmgr.enter()
-    stateMachine.updateState('reset', async () => {})
+    g_stateMachine.updateState('reset', async () => {})
     return callbackSetList([])
 }
 
@@ -127,22 +127,22 @@ searchHandler = (action, searchWord, callbackSetList) => {
     searchCmdArgs = searchCmdArgs.concat(subcmdArgs).concat([searchWord])
     mousetrap.bind('enter', async () => {
       if (searchWord.startsWith(':') || searchWord.startsWith('：')) {
-        cmdHandler(searchWord.slice(1))
+        cmdHandler(searchWord.slice(1), mgrCmd, callbackSetList, execCmd)
         utools.setSubInputValue('')
         return
       }
-      await stateMachine.updateState('execute', async ()=>{
+      await g_stateMachine.updateState('execute', async ()=>{
         await execCmd(searchCmdArgs, callbackSetList, pkgmgr)
       })       
     })
     mousetrap.bind('ctrl+e', async () => {
-      stateMachine.updateState('reset', async () => {
+      g_stateMachine.updateState('reset', async () => {
         utools.setSubInputValue('')
         g_items = []
         callbackSetList([])
       })
     })
-    stateMachine.updateState('type', async () => {
+    g_stateMachine.updateState('type', async () => {
         const filtered = g_items.filter(x => {
           return x.title.includes(searchWord)
         })
