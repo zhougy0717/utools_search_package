@@ -24,9 +24,5 @@ class Brew extends PkgMgr {
     listHandler(text) {
         return this.searchHandler(text)
     }
-
-    subcmdArgs(cmd) {
-        return this.SUBCMDS[cmd]
-    }
 }
 module.exports = Brew

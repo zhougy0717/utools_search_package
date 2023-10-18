@@ -8,7 +8,7 @@ class PkgMgr {
     }
 
     subcmdArgs(cmd) {
-        throw new Error('a package manager should maintain sub command arg table')
+        return this.SUBCMDS[cmd]
     }
 }
 

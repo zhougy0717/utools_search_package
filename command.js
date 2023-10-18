@@ -1,15 +1,6 @@
-const { spawn } = require('child_process');
-const Nanobar = require('nanobar')
 const g_stateMachine = require('./state_machine.js')
-const g_pkgmgrs = require('./package_managers.js')
-const ShellCmd = require('./shell_commands/shell_command.js')
 const SearchCmd = require('./shell_commands/search_cmd.js');
 const ListCmd = require('./shell_commands/list_cmd.js');
-
-// const g_cmds = {
-//     install: installCmd,
-//     list: listCmd
-// }
 
 cmdHandler = async (cmd, mgrCmd, outputCb) => {
     const args = cmd.split(' ')
@@ -36,6 +27,5 @@ cmdHandler = async (cmd, mgrCmd, outputCb) => {
         })
     }
 }
-
 
 module.exports = { cmdHandler }

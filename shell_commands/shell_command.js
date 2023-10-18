@@ -1,7 +1,6 @@
 const { spawn } = require('child_process');
 const Nanobar = require('nanobar')
 const g_stateMachine = require('../state_machine.js')
-const g_pkgmgrs = require('../package_managers.js')
 const pkgmgrFactory = require('../package_managers/pkgmgr_factory.js')
   
 asItem = (output) => {

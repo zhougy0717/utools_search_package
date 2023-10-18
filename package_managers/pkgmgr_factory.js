@@ -1,8 +1,11 @@
 const Brew = require("./brew.js")
+const Npm = require("./npm.js")
+
 const PkgMgr = require("./pkgmgr.js")
 
 const table = {
-    brew: Brew
+    brew: Brew,
+    npm: Npm
 }
 
 create = (type) => {
@@ -13,4 +16,8 @@ create = (type) => {
     return new table[type]()
 }
 
-module.exports = {create}
+isSupport = (type) => {
+    return type in table
+}
+
+module.exports = {create, isSupport}

@@ -1,18 +1,14 @@
-const { exec, spawn } = require('child_process');
 const mousetrap = require('mousetrap')
-const util = require('util')
-const Nanobar = require('nanobar')
 const { cmdHandler } = require('./command.js')
-const ShellCmd = require('./shell_commands/shell_command.js')
+const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 
 let g_items = []
 const g_stateMachine = require('./state_machine.js')
-const g_pkgmgrs = require('./package_managers.js')
 
 enterHandler = (action, callbackSetList) => {
     const mgrCmd = action.code
-    if (! mgrCmd in g_pkgmgrs) {
-      return
+    if (!pkgmgrFactory.isSupport(mgrCmd)) {
+        return
     }
     if(utools.isMacOs() || utools.isLinux()) {
         process.env.PATH = '/usr/local/bin:~/bin:~/tools/bin:' + process.env.PATH
@@ -20,16 +16,15 @@ enterHandler = (action, callbackSetList) => {
     else if (utools.isWindows()) {
         process.env.PATH = '~/tools/bin;' + process.env.PATH
     }
-    const pkgmgr = g_pkgmgrs[mgrCmd]
-    pkgmgr.enter()
+
     g_stateMachine.updateState('reset', async () => {})
     return callbackSetList([])
 }
 
 searchHandler = (action, searchWord, callbackSetList) => {
     const mgrCmd = action.code
-    if (! mgrCmd in g_pkgmgrs) {
-      return
+    if (!pkgmgrFactory.isSupport(mgrCmd)) {
+        return
     }
     if (/^\s*$/.test(searchWord)) {
         callbackSetList(g_items)
@@ -74,10 +69,11 @@ selectHandler = (action, itemData) => {
     }
     else if (itemData.action == 'install') {
       const mgrCmd = action.code
-      if (! mgrCmd in g_pkgmgrs) {
+      if (!pkgmgrFactory.isSupport(mgrCmd)) {
         return
       }
-      const args = g_pkgmgrs[mgrCmd].subcmdArgs('install')
+      const pkgmgr = pkgmgrFactory.create(mgrCmd)
+      const args = pkgmgr.subcmdArgs('install')
       const installCmd = action.code + ' ' + args.join(' ') + ' ' + itemData.title
       utools.copyText(installCmd);
       window.utools.showNotification("安装命令已复制\n" + installCmd)
