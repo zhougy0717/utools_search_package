@@ -1,29 +1,8 @@
 const { spawn } = require('child_process');
 const Nanobar = require('nanobar')
-const g_stateMachine = require('./state_machine.js')
-const g_pkgmgrs = require('./package_managers.js')
-
-updateResult = (code, items) => {
-    if (code == 0) {
-      items.forEach(x => {
-        x.description = "点击复制安装命令"
-        x.icon = 'icons/install.png'
-        x.action = 'install'
-      })
-    }
-    else {
-      items.forEach(x => {
-        x.description = "点击复制本行日志"
-        x.icon = 'icons/log.png'
-        x.action = 'copy'
-      })
-      items.unshift({
-        title:`命令错误退出, 错误码 ${code}`,
-        icon: 'icons/error.png'
-      })
-    }
-    return items
-  }
+const g_stateMachine = require('../state_machine.js')
+const g_pkgmgrs = require('../package_managers.js')
+const pkgmgrFactory = require('../package_managers/pkgmgr_factory.js')
   
 asItem = (output) => {
     let lines = output.split('\n')
@@ -62,6 +41,29 @@ class ShellCmd {
         this.mgrCmd = mgrCmd
         this.args = args
         this.outputCb = outputCb
+        this.pkgmgr = pkgmgrFactory.create(mgrCmd)
+    }
+
+    updateResult (code, items) {
+        if (code == 0) {
+          items.forEach(x => {
+            x.description = "点击复制安装命令"
+            x.icon = 'icons/install.png'
+            x.action = 'install'
+          })
+        }
+        else {
+          items.forEach(x => {
+            x.description = "点击复制本行日志"
+            x.icon = 'icons/log.png'
+            x.action = 'copy'
+          })
+          items.unshift({
+            title:`命令错误退出, 错误码 ${code}`,
+            icon: 'icons/error.png'
+          })
+        }
+        return items
     }
 
     async doit () {
@@ -82,14 +84,13 @@ class ShellCmd {
         })
         cmdProc.on('close', (code) => {
             let items;
-            const pkgmgr = g_pkgmgrs[this.mgrCmd]
             if (code == 0) {
-                items = pkgmgr.handleCmdOutput(output)
+                items = this.handleCmdOutput(output)
             }
             else {
                 items = asItem(output)
             }
-            items = updateResult(code, items)
+            items = this.updateResult(code, items)
             this.outputCb(items)
             g_stateMachine.updateState('done', async() => {
                 utools.setSubInputValue('')

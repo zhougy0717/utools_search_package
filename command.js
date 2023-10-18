@@ -2,7 +2,9 @@ const { spawn } = require('child_process');
 const Nanobar = require('nanobar')
 const g_stateMachine = require('./state_machine.js')
 const g_pkgmgrs = require('./package_managers.js')
-const ShellCmd = require('./shell_command.js')
+const ShellCmd = require('./shell_commands/shell_command.js')
+const SearchCmd = require('./shell_commands/search_cmd.js');
+const ListCmd = require('./shell_commands/list_cmd.js');
 
 // const g_cmds = {
 //     install: installCmd,
@@ -22,25 +24,18 @@ cmdHandler = async (cmd, mgrCmd, outputCb) => {
         window.utools.showNotification(g_stateMachine.getState())
     }
     else if (args[0] === 'list') {
-        const pkgmgr = g_pkgmgrs[mgrCmd]
-        const subcmdArgs = pkgmgr.subcmdArgs('list')
-        let listCmdArgs = [mgrCmd]
-        listCmdArgs = listCmdArgs.concat(subcmdArgs)
-        await g_stateMachine.updateState('execute', async ()=>{
-            const cmd = new ShellCmd(mgrCmd, subcmdArgs, outputCb)
+        await g_stateMachine.updateState('execute', async () => {
+            const cmd = new ListCmd(mgrCmd, [], outputCb)
             await cmd.doit()
         })
     }
     else if (args[0] === 'search') {
-        await g_stateMachine.updateState('execute', async ()=>{
-            const pkgmgr = g_pkgmgrs[mgrCmd]
-            const subcmdArgs = pkgmgr.subcmdArgs('search')
-            const searchWord = args[1]
-            const cmd = new ShellCmd(mgrCmd, [...subcmdArgs, searchWord], outputCb)
+        await g_stateMachine.updateState('execute', async () => {
+            const cmd = new SearchCmd(mgrCmd, args.slice(1), outputCb)
             await cmd.doit()
         })
     }
 }
 
 
-module.exports = {cmdHandler}
+module.exports = { cmdHandler }

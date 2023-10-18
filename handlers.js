@@ -3,7 +3,7 @@ const mousetrap = require('mousetrap')
 const util = require('util')
 const Nanobar = require('nanobar')
 const { cmdHandler } = require('./command.js')
-const ShellCmd = require('./shell_command.js')
+const ShellCmd = require('./shell_commands/shell_command.js')
 
 let g_items = []
 const g_stateMachine = require('./state_machine.js')
@@ -35,7 +35,7 @@ searchHandler = (action, searchWord, callbackSetList) => {
         callbackSetList(g_items)
         return
     }
-    
+
     updateItemCb = (outItems) => {
         g_items = outItems
         callbackSetList(g_items)
