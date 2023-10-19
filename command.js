@@ -50,7 +50,6 @@ copyRemoveCmd = (mgrCmd, pkg, cb) => {
     const args = pkgmgr.subcmdArgs('remove')
     const removeCmd = mgrCmd + ' ' + args.join(' ') + ' ' + pkg
     cb(removeCmd)
-
 }
 
 module.exports = { cmdHandler, copyInstallCmd, copyRemoveCmd }

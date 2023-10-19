@@ -37,7 +37,9 @@ class SearchCmd extends ShellCmd {
 
     handleCmdOutput(output) {
         const pm = pkgmgrFactory.create(this.mgrCmd)
-        return pm.searchHandler(output)
+        const items = pm.searchHandler(output)
+        window.utools.showNotification(`找到${items.length}个软件包`)
+        return items
     }
 }
 
