@@ -10,11 +10,20 @@ enterHandler = (action, callbackSetList) => {
     if (!pkgmgrFactory.isSupport(mgrCmd)) {
         return
     }
+    const userAddedPaths = window.utools.dbStorage.getItem('userPaths') ?? []
     if(utools.isMacOs() || utools.isLinux()) {
         process.env.PATH = '/usr/local/bin:~/bin:~/tools/bin:' + process.env.PATH
+        if (userAddedPaths.length > 0) {
+            const userPath = userAddedPaths.join(':')
+            process.env.PATH = userPath + ":" + process.env.PATH
+        }
     }
     else if (utools.isWindows()) {
         process.env.PATH = '~/tools/bin;' + process.env.PATH
+        if (userAddedPaths.length > 0) {
+            const userPath = userAddedPaths.join(';')
+            process.env.PATH = userPath + ";" + process.env.PATH
+        }
     }
 
     g_stateMachine.updateState('reset', async () => {})

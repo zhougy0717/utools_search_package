@@ -10,6 +10,9 @@ cmdHandler = async (cmd, mgrCmd, outputCb) => {
             window.utools.showNotification('环境变量PATH = ' + process.env.PATH)
             return
         }
+        const userAddedPaths = window.utools.dbStorage.getItem('userPaths') ?? []
+        userAddedPaths.push(args[1])
+        window.utools.dbStorage.setItem('userPaths', userAddedPaths)
         process.env.PATH = args[1] + ':' + process.env.PATH
     }
     else if (args[0] === 'state') {

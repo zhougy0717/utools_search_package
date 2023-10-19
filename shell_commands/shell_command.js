@@ -43,27 +43,27 @@ class ShellCmd {
         this.pkgmgr = pkgmgrFactory.create(mgrCmd)
     }
 
-    updateResult (code, items) {
-        if (code == 0) {
-          items.forEach(x => {
-            x.description = "点击复制安装命令"
-            x.icon = 'icons/install.png'
-            x.action = 'install'
-          })
-        }
-        else {
-          items.forEach(x => {
-            x.description = "点击复制本行日志"
-            x.icon = 'icons/log.png'
-            x.action = 'copy'
-          })
-          items.unshift({
-            title:`命令错误退出, 错误码 ${code}`,
-            icon: 'icons/error.png'
-          })
-        }
-        return items
-    }
+    // updateResult (code, items) {
+    //     if (code == 0) {
+    //       items.forEach(x => {
+    //         x.description = "点击复制安装命令"
+    //         x.icon = 'icons/install.png'
+    //         x.action = 'install'
+    //       })
+    //     }
+    //     else {
+    //       items.forEach(x => {
+    //         x.description = "点击复制本行日志"
+    //         x.icon = 'icons/log.png'
+    //         x.action = 'copy'
+    //       })
+    //       items.unshift({
+    //         title:`命令错误退出, 错误码 ${code}`,
+    //         icon: 'icons/error.png'
+    //       })
+    //     }
+    //     return items
+    // }
 
     async doit () {
         let nanobar = initBar()

@@ -12,7 +12,6 @@ class ListCmd extends ShellCmd {
           items.forEach(x => {
             x.icon = 'icons/install.png'
             x.action = 'list'
-            x.description = '点击复制删除命令'
           })
         }
         else {
