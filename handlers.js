@@ -1,5 +1,5 @@
 const mousetrap = require('mousetrap')
-const { cmdHandler } = require('./command.js')
+const { cmdHandler, copyInstallCmd, copyRemoveCmd } = require('./command.js')
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 
 let g_items = []
@@ -68,15 +68,16 @@ selectHandler = (action, itemData) => {
       window.utools.showNotification("错误日志已复制\n")
     }
     else if (itemData.action == 'install') {
-      const mgrCmd = action.code
-      if (!pkgmgrFactory.isSupport(mgrCmd)) {
-        return
-      }
-      const pkgmgr = pkgmgrFactory.create(mgrCmd)
-      const args = pkgmgr.subcmdArgs('install')
-      const installCmd = action.code + ' ' + args.join(' ') + ' ' + itemData.title
-      utools.copyText(installCmd);
-      window.utools.showNotification("安装命令已复制\n" + installCmd)
+      copyInstallCmd(action.code, itemData.title, (text) => {
+        utools.copyText(text);
+        window.utools.showNotification("安装命令已复制\n" + text)
+      })
+    }
+    else if (itemData.action == 'list') {
+      copyRemoveCmd(action.code, itemData.title, (text) => {
+        utools.copyText(text);
+        window.utools.showNotification("删除命令已复制\n" + text)
+      })
     }
     window.utools.hideMainWindow()
 }

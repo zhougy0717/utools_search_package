@@ -10,7 +10,7 @@ class SearchCmd extends ShellCmd {
     updateResult (code, items) {
         if (code == 0) {
           items.forEach(x => {
-            if (! 'description' in x) {
+            if (! 'description' in x || /^\s*$/.test(x.description)) {
                 x.description = "点击复制安装命令"
             }
             x.icon = 'icons/install.png'

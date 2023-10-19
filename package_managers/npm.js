@@ -6,7 +6,8 @@ class Npm extends PkgMgr {
         this.SUBCMDS = {
             install: ['install'],
             search: ['search', '--parseable'],
-            list: ['list', '-lg']
+            list: ['list', '-lg'],
+            remove: ['uninstall']
         }
     }
     searchHandler(output) {

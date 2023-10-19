@@ -6,7 +6,8 @@ class Brew extends PkgMgr {
         this.SUBCMDS = {
             install: ['install'],
             search: ['search'],
-            list: ['list']
+            list: ['list'],
+            remove: ['uninstall']
         }
     }
     searchHandler(text) {

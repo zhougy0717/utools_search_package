@@ -1,6 +1,7 @@
 const g_stateMachine = require('./state_machine.js')
 const SearchCmd = require('./shell_commands/search_cmd.js');
 const ListCmd = require('./shell_commands/list_cmd.js');
+const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 
 cmdHandler = async (cmd, mgrCmd, outputCb) => {
     const args = cmd.split(' ')
@@ -28,4 +29,25 @@ cmdHandler = async (cmd, mgrCmd, outputCb) => {
     }
 }
 
-module.exports = { cmdHandler }
+copyInstallCmd = (mgrCmd, pkg, cb) => {
+    if (!pkgmgrFactory.isSupport(mgrCmd)) {
+        return
+    }
+    const pkgmgr = pkgmgrFactory.create(mgrCmd)
+    const args = pkgmgr.subcmdArgs('install')
+    const installCmd = mgrCmd + ' ' + args.join(' ') + ' ' + pkg
+    cb(installCmd)
+}
+
+copyRemoveCmd = (mgrCmd, pkg, cb) => {
+    if (!pkgmgrFactory.isSupport(mgrCmd)) {
+        return
+    }
+    const pkgmgr = pkgmgrFactory.create(mgrCmd)
+    const args = pkgmgr.subcmdArgs('remove')
+    const removeCmd = mgrCmd + ' ' + args.join(' ') + ' ' + pkg
+    cb(removeCmd)
+
+}
+
+module.exports = { cmdHandler, copyInstallCmd, copyRemoveCmd }
