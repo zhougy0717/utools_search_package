@@ -10,9 +10,8 @@ class ListCmd extends ShellCmd {
     updateResult (code, items) {
         if (code == 0) {
           items.forEach(x => {
-            x.description = "点击复制安装命令"
             x.icon = 'icons/install.png'
-            x.action = 'install'
+            x.action = 'list'
           })
         }
         else {

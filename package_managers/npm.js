@@ -6,7 +6,7 @@ class Npm extends PkgMgr {
         this.SUBCMDS = {
             install: ['install'],
             search: ['search', '--parseable'],
-            list: ['list', '-g']
+            list: ['list', '-lg']
         }
     }
     searchHandler(output) {
@@ -37,7 +37,32 @@ class Npm extends PkgMgr {
     }
 
     listHandler(text) {
-        return this.searchHandler(text)
+        const lines = text.split('\n')
+        let items = []
+        items.push({
+            title: "nodejs软件包安装位置",
+            description: lines[0]
+        })
+        for (let i = 2; i < lines.length - 2; i++) {
+            let line = lines[i]
+            if (/^\s*$/.test(lines[i])) {
+                continue
+            }
+            let pkg = {}
+            if (line.startsWith('+') || line.startsWith('`')) {
+                const payload = line.slice(4)
+                const pair = payload.split('@')
+                pkg['title'] = pair[0]
+                pkg['description'] = `版本：${pair[1]}`
+                line = lines[++i]
+                if (! /^\s*$/.test(line)) {
+                    pkg['description'] += '，' + line.slice(4)
+                }
+                items.push(pkg)
+            }
+        }
+
+        return items
     }
 }
 module.exports = Npm
