@@ -25,7 +25,7 @@ class Apt extends PkgMgr {
     }
 
     isEnd(text) {
-        return /Connection to 10.211.55.5 closed./.test(text)
+        return /Connection to .* closed./.test(text)
     }
 
     searchHandler(text) {
