@@ -25,5 +25,9 @@ class Brew extends PkgMgr {
     listHandler(text) {
         return this.searchHandler(text)
     }
+
+    osSupported() {
+        return utools.isLinux() || utools.isMacOS()
+    }
 }
 module.exports = Brew

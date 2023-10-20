@@ -1,11 +1,13 @@
 const Brew = require("./brew.js")
 const Npm = require("./npm.js")
+const Apt = require("./apt.js")
 
 const PkgMgr = require("./pkgmgr.js")
 
 const table = {
     brew: Brew,
-    npm: Npm
+    npm: Npm,
+    apt: Apt
 }
 
 create = (type) => {

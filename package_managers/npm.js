@@ -65,5 +65,9 @@ class Npm extends PkgMgr {
 
         return items
     }
+
+    osSupported() {
+        return true
+    }
 }
 module.exports = Npm

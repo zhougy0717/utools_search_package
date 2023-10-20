@@ -2,6 +2,7 @@ const g_stateMachine = require('./state_machine.js')
 const SearchCmd = require('./shell_commands/search_cmd.js');
 const ListCmd = require('./shell_commands/list_cmd.js');
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
+const { exec, spawn } = require('child_process');
 
 cmdHandler = async (cmd, mgrCmd, outputCb) => {
     const args = cmd.split(' ')
@@ -28,6 +29,26 @@ cmdHandler = async (cmd, mgrCmd, outputCb) => {
         await g_stateMachine.updateState('execute', async () => {
             const cmd = new SearchCmd(mgrCmd, args.slice(1), outputCb)
             await cmd.doit()
+        })
+    }
+    else if (args[0] === 'ssh') {
+        if (args.length < 2 || /^\s*$/.test(args[1])) {
+            const sshArgs = window.utools.dbStorage.getItem('sshArgs') ?? []
+            if (sshArgs.length === 0) {
+                window.utools.showNotification(`ssh命令未配置`)
+            }
+            else {
+                window.utools.showNotification(`ssh命令配置：\nssh ${sshArgs.join(' ')}`)
+            }
+            return
+        }
+        const sshArgs = ['-tt', ...args.slice(1), 'ls']
+        let cmdProc = spawn ('ssh', sshArgs)
+        cmdProc.on('close', (code) => {
+            if (code == 0) {
+                window.utools.dbStorage.setItem('sshArgs', ['-tt', ...args.slice(1)])  
+                window.utools.showNotification(`测试连接成功: ${args[1]}`)
+            }
         })
     }
 }

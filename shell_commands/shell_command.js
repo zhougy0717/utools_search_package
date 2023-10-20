@@ -43,13 +43,25 @@ class ShellCmd {
         this.pkgmgr = pkgmgrFactory.create(mgrCmd)
     }
 
+    addSshArgs() {
+        const sshArgs = window.utools.dbStorage.getItem('sshArgs') ?? []
+        if (sshArgs.length === 0) {
+            return false
+        }
+        this.args = ['ssh', ...sshArgs, ...this.args]
+        return true
+    }
+
     async doit () {
         let nanobar = initBar()
         let output = ""
-        // let cmdProc2 = spawn ('ssh', ['zhougy@192.168.0.106', 'ls'])
-        // cmdProc2.stdout.on('data', (data) => {
-        //     window.utools.showNotification(data + '')
-        // })
+        if (!this.pkgmgr.osSupported()) {
+            const ret = this.addSshArgs()
+            if (!ret) {
+                window.utools.showNotification(`本地不支持命令${this.mgrCmd},且ssh未配置`)
+                return
+            }
+        }
         let cmdProc = spawn (this.args[0], this.args.slice(1))
         let progress = 10
         nanobar.go(progress)

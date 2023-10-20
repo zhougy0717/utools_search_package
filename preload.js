@@ -17,5 +17,14 @@ window.exports = {
       select: selectHandler,
       placeholder: "搜索软件包，输入ctrl+e可以重新搜索"
     }
+  },
+  'apt': {
+    mode: 'list',
+    args: {
+      enter: enterHandler,
+      search: searchHandler,
+      select: selectHandler,
+      placeholder: "搜索软件包，输入ctrl+e可以重新搜索"
+    }
   }
 }

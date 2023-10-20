@@ -29,5 +29,13 @@
         "cmds": [
         "npm"
         ]
+    },
+    {
+        "platform": ["darwin", "windows", "linux"],
+        "code": "apt",
+        "explain": "搜索软件包",
+        "cmds": [
+        "apt"
+        ]
     }]
   }
