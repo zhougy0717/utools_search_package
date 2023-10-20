@@ -5,7 +5,7 @@ class ListCmd extends ShellCmd {
     constructor(mgrCmd, args, outputCb) {
         super(mgrCmd, args, outputCb)
         const subcmdArgs = this.pkgmgr.subcmdArgs('list')
-        this.args = [...subcmdArgs, ...args]
+        this.args = [mgrCmd, ...subcmdArgs, ...args]
     }
     updateResult (code, items) {
         if (code == 0) {
@@ -33,7 +33,6 @@ class ListCmd extends ShellCmd {
         const items = pm.listHandler(output)
         window.utools.showNotification(`共安装${items.length - 1}个软件包`)
         return items
-
     }
 }
 

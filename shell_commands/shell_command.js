@@ -43,32 +43,14 @@ class ShellCmd {
         this.pkgmgr = pkgmgrFactory.create(mgrCmd)
     }
 
-    // updateResult (code, items) {
-    //     if (code == 0) {
-    //       items.forEach(x => {
-    //         x.description = "点击复制安装命令"
-    //         x.icon = 'icons/install.png'
-    //         x.action = 'install'
-    //       })
-    //     }
-    //     else {
-    //       items.forEach(x => {
-    //         x.description = "点击复制本行日志"
-    //         x.icon = 'icons/log.png'
-    //         x.action = 'copy'
-    //       })
-    //       items.unshift({
-    //         title:`命令错误退出, 错误码 ${code}`,
-    //         icon: 'icons/error.png'
-    //       })
-    //     }
-    //     return items
-    // }
-
     async doit () {
         let nanobar = initBar()
         let output = ""
-        let cmdProc = spawn (this.mgrCmd, this.args)
+        // let cmdProc2 = spawn ('ssh', ['zhougy@192.168.0.106', 'ls'])
+        // cmdProc2.stdout.on('data', (data) => {
+        //     window.utools.showNotification(data + '')
+        // })
+        let cmdProc = spawn (this.args[0], this.args.slice(1))
         let progress = 10
         nanobar.go(progress)
         cmdProc.stdout.on('data', (data) => {
