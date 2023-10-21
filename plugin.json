@@ -15,7 +15,7 @@
         ]
     }, 
     {
-        "platform": ["windows"],
+        "platform": ["win32"],
         "code": "choco",
         "explain": "搜索软件包",
         "cmds": [
@@ -23,7 +23,7 @@
         ]
     },
     {
-        "platform": ["darwin", "windows", "linux"],
+        "platform": ["darwin", "win32", "linux"],
         "code": "npm",
         "explain": "搜索软件包",
         "cmds": [
@@ -31,7 +31,7 @@
         ]
     },
     {
-        "platform": ["darwin", "windows", "linux"],
+        "platform": ["darwin", "win32", "linux"],
         "code": "apt",
         "explain": "搜索软件包",
         "cmds": [
