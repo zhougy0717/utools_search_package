@@ -35,9 +35,31 @@ searchHandler = (action, searchWord, callbackSetList) => {
     if (!pkgmgrFactory.isSupport(mgrCmd)) {
         return
     }
+    if (searchWord === ":" || searchWord === "：") {
+      g_stateMachine.updateState('inputCmd', async (oldState, newState) => {
+        // TODO: set g_items to commands items
+        callbackSetList([])
+      })
+      return
+    }
     if (/^\s*$/.test(searchWord)) {
-        callbackSetList(g_items)
+        g_stateMachine.updateState('clearText', async (oldState, newState) => {
+          if (oldState === "command" && newState === "init") {
+            callbackSetList([])
+          }
+          else {
+            callbackSetList(g_items)
+          }
+        })
         return
+    }
+    else {
+      g_stateMachine.updateState('type', async (oldState, newState) => {
+        const filtered = g_items.filter(x => {
+          return x.title.includes(searchWord)
+        })
+        callbackSetList(filtered)
+      })
     }
 
     updateItemCb = (outItems) => {
@@ -63,12 +85,7 @@ searchHandler = (action, searchWord, callbackSetList) => {
       })
     })
 
-    g_stateMachine.updateState('type', async () => {
-        const filtered = g_items.filter(x => {
-          return x.title.includes(searchWord)
-        })
-        callbackSetList(filtered)
-    })
+    
 }
 
 selectHandler = (action, itemData) => {

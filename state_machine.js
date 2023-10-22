@@ -1,17 +1,25 @@
 const stateTable = {
+    init: {
+        execute: "executing",
+        inputCmd: "command"
+    },
     command: {
-        execute: "executing"
+        execute: "executing",
+        type: "command",
+        clearText: "init"
     },
     executing: {
         done: "filtering",
-        reset: "command"
+        reset: "init"
     },
     filtering: {
-        reset: "command",
-        type: "filtering"
+        reset: "init",
+        type: "filtering",
+        clearText: "filtering",
+        inputCmd: "command"
     }
 }
-let g_mode = "command"
+let g_mode = "init"
 async function updateState (trigger, action) {
     if (trigger in stateTable[g_mode]) {
         const oldState = g_mode
