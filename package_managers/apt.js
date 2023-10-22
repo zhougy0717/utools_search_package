@@ -56,6 +56,14 @@ class Apt extends PkgMgr {
     }
 
     osSupported() {
+        const { execSync } = require('child_process');
+
+        try {
+        const result = execSync('hostnamectl', { encoding: 'utf-8' });
+            console.log(result);
+        } catch (error) {
+            console.error(error);
+        }
         return utools.isLinux()
     }
 }

@@ -16,31 +16,17 @@ asItem = (output) => {
     })
     return items
 }
-  
-initBar = () => {
-    var nanobar = new Nanobar();
-    document.getElementById('nanobarcss').innerHTML = `
-    .nanobar {
-        width:100%;
-        height:1px;
-        z-index:99999;
-        top:0
-    }
-    .bar {
-        width:0;
-        height:100%;
-        transition:height .3s;
-        background-image: linear-gradient(to top, #37ecba 0%, #72afd3 100%)
-    }`
-    return nanobar
-}
 
 class ShellCmd {
     constructor(mgrCmd, args, outputCb) {
-        this.mgrCmd = mgrCmd
         this.args = args
-        this.outputCb = outputCb
-        this.pkgmgr = pkgmgrFactory.create(mgrCmd)
+        if (outputCb) {
+            this.outputCb = outputCb
+        }
+        if(mgrCmd) {
+            this.mgrCmd = mgrCmd
+            this.pkgmgr = pkgmgrFactory.create(mgrCmd)
+        }
     }
 
     addSshArgs() {
@@ -52,8 +38,26 @@ class ShellCmd {
         return true
     }
 
+    initBar = () => {
+        var nanobar = new Nanobar();
+        document.getElementById('nanobarcss').innerHTML = `
+        .nanobar {
+            width:100%;
+            height:1px;
+            z-index:99999;
+            top:0
+        }
+        .bar {
+            width:0;
+            height:100%;
+            transition:height .3s;
+            background-image: linear-gradient(to top, #37ecba 0%, #72afd3 100%)
+        }`
+        return nanobar
+    }
+
     async doit () {
-        let nanobar = initBar()
+        let nanobar = this.initBar()
         let output = ""
         if (!this.pkgmgr.osSupported()) {
             const ret = this.addSshArgs()

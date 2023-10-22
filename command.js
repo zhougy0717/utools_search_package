@@ -2,7 +2,8 @@ const g_stateMachine = require('./state_machine.js')
 const SearchCmd = require('./shell_commands/search_cmd.js');
 const ListCmd = require('./shell_commands/list_cmd.js');
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
-const { exec, spawn } = require('child_process');
+const { spawn } = require('child_process');
+const TestSshCmd = require('./shell_commands/test_ssh_cmd.js');
 
 cmdHandler = async (cmd, mgrCmd, outputCb) => {
     const args = cmd.split(' ')
@@ -42,14 +43,8 @@ cmdHandler = async (cmd, mgrCmd, outputCb) => {
             }
             return
         }
-        const sshArgs = ['-tt', ...args.slice(1), 'ls']
-        let cmdProc = spawn ('ssh', sshArgs)
-        cmdProc.on('close', (code) => {
-            if (code == 0) {
-                window.utools.dbStorage.setItem('sshArgs', ['-tt', ...args.slice(1)])  
-                window.utools.showNotification(`测试连接成功: ${args[1]}`)
-            }
-        })
+        const cmd = new TestSshCmd(args.slice(1))
+        cmd.doit()
     }
 }
 
