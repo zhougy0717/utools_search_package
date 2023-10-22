@@ -30,6 +30,9 @@ class Dnf extends PkgMgr {
         let lines = text.split("\n")
         lines = lines.filter(x => !/^\s*$/.test(x))
         const start = this.findFirstPackage(lines)
+        if (start === -1) {
+            return items
+        }
 
         for (let i = start; i < lines.length; i++) {
             if (this.isEnd(lines[i])) {

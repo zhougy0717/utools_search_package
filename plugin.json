@@ -39,8 +39,16 @@
         ]
     },
     {
-        "platform": ["darwin", "windows", "linux"],
+        "platform": ["darwin", "win32", "linux"],
         "code": "dnf",
+        "explain": "搜索软件包",
+        "cmds": [
+        "dnf"
+        ]
+    },
+    {
+        "platform": ["darwin", "win32", "linux"],
+        "code": "yum",
         "explain": "搜索软件包",
         "cmds": [
         "dnf"
