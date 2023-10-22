@@ -15,19 +15,6 @@ class Apt extends PkgMgr {
         return str.replace(/\x1b\[[0-9;]*[mK]/g, '');
     }
 
-    findFirstPackage(lines) {
-        for (let i = 0; i < lines.length; i++) {
-            if (/Full Text Search... Done/.test(lines[i])) {
-                return i + 1
-            }
-        }
-        return -1
-    }
-
-    isEnd(text) {
-        return /Connection to .* closed./.test(text)
-    }
-
     isPkgLine(line) {
         const words = line.split(' ')
         if (words.length == 3) {
@@ -41,10 +28,6 @@ class Apt extends PkgMgr {
         text = this.removeColorCode(text)
         let lines = text.split("\n")
         lines = lines.filter(x => !/^\s*$/.test(x))
-        //const start = this.findFirstPackage(lines)
-        //if (start === -1) {
-        //    return items
-        //}
 
         for (let i = 0; i < lines.length; i++) {
             if (!this.isPkgLine(lines[i])) {

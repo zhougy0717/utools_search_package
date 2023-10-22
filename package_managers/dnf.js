@@ -85,7 +85,19 @@ class Dnf extends PkgMgr {
     }
 
     osSupported() {
-        return utools.isLinux()
+        const isLinux = utools.isLinux()
+        if (!isLinux) {
+            return false
+        }
+
+        const { execSync } = require('child_process');
+        try {
+            const result = execSync('hostnamectl', { encoding: 'utf-8' });
+            const lowRes = result.toLowerCase()
+            return lowRes.includes('fedora') || lowRes.includes('rhel') || lowRes.includes('centos')
+        } catch (error) {
+            return false
+        }
     }
 }
 module.exports = Dnf
