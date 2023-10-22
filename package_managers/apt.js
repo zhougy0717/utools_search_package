@@ -28,16 +28,27 @@ class Apt extends PkgMgr {
         return /Connection to .* closed./.test(text)
     }
 
+    isPkgLine(line) {
+        const words = line.split(' ')
+        if (words.length == 3) {
+            return true
+        }
+        return false
+    }
+
     searchHandler(text) {
         let items = []
         text = this.removeColorCode(text)
         let lines = text.split("\n")
         lines = lines.filter(x => !/^\s*$/.test(x))
-        const start = this.findFirstPackage(lines)
+        //const start = this.findFirstPackage(lines)
+        //if (start === -1) {
+        //    return items
+        //}
 
-        for (let i = start; i < lines.length; i++) {
-            if (this.isEnd(lines[i])) {
-                break
+        for (let i = 0; i < lines.length; i++) {
+            if (!this.isPkgLine(lines[i])) {
+                continue
             }
             const words = lines[i].split(' ')
             const name = words[0]
@@ -56,15 +67,18 @@ class Apt extends PkgMgr {
     }
 
     osSupported() {
-        const { execSync } = require('child_process');
-
-        try {
-        const result = execSync('hostnamectl', { encoding: 'utf-8' });
-            console.log(result);
-        } catch (error) {
-            console.error(error);
+        const isLinux = utools.isLinux()
+        if (!isLinux) {
+            return false
         }
-        return utools.isLinux()
+
+        const { execSync } = require('child_process');
+        try {
+            const result = execSync('hostnamectl', { encoding: 'utf-8' });
+            return result.toLowerCase().includes('ubuntu')
+        } catch (error) {
+            return false
+        }
     }
 }
 module.exports = Apt
