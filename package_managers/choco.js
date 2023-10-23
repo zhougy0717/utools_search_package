@@ -26,6 +26,16 @@ class Choco extends PkgMgr {
                 return i;
             }
         }
+        for (let i = 0; i < lines.length; i++) {
+            if (/^ Description:/.test(lines[i])) {
+                return i;
+            }
+        }
+        for (let i = 0; i < lines.length; i++) {
+            if (/^ Title:/.test(lines[i])) {
+                return i;
+            }
+        }
         return -1
     }
     processAPkg(lines) {
@@ -33,8 +43,11 @@ class Choco extends PkgMgr {
         const name = words[0]
         const version = words[1]
         const lineno = this.findSummary(lines)
-        words = lines[lineno].split(':')
-        const summary = words[1].trim()
+        let summary = ""
+        if (lineno !== -1) {
+            words = lines[lineno].split(':')
+            summary = words[1].trim()
+        }
         const item = {
             title: name,
             description: `版本：${version}, ${summary}`

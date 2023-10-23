@@ -66,7 +66,10 @@ class Dnf extends PkgMgr {
         let lines = text.split("\n")
         lines = lines.filter(x => !/^\s*$/.test(x))
         const start = this.findFirstPackageInList(lines)
-
+        if (start === -1) {
+            return items
+        }
+        
         for (let i = start; i < lines.length; i++) {
             if (this.isEnd(lines[i])) {
                 break
@@ -85,19 +88,8 @@ class Dnf extends PkgMgr {
     }
 
     osSupported() {
-        const isLinux = utools.isLinux()
-        if (!isLinux) {
-            return false
-        }
-
-        const { execSync } = require('child_process');
-        try {
-            const result = execSync('hostnamectl', { encoding: 'utf-8' });
-            const lowRes = result.toLowerCase()
-            return lowRes.includes('fedora') || lowRes.includes('rhel') || lowRes.includes('centos')
-        } catch (error) {
-            return false
-        }
+        // utools only supports Debian like Linux. No Fedora family.
+        return false
     }
 }
 module.exports = Dnf

@@ -7,7 +7,7 @@
     "preload": "preload.js",
     "logo": "icons/logo.png",
     "features": [{
-        "platform": ["darwin"],
+        "platform": ["darwin", "win32", "linux"],
         "code": "brew",
         "explain": "搜索软件包",
         "cmds": [

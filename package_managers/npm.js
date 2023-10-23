@@ -19,7 +19,6 @@ class Npm extends PkgMgr {
             })
             wordMatrix.push(words)
         });
-        const head = wordMatrix[0]
         const items = []
         // The output line looks like this
         // git     A node.js library for git       =christkv       2013-06-24      0.1.5
