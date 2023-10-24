@@ -4,7 +4,7 @@ class Npm extends PkgMgr {
     constructor() {
         super()
         this.SUBCMDS = {
-            install: ['install'],
+            install: ['install', '-g'],
             search: ['search', '--parseable'],
             list: ['list', '-lg'],
             remove: ['uninstall']
