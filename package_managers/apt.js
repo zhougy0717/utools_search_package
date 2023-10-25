@@ -63,5 +63,11 @@ class Apt extends PkgMgr {
             return false
         }
     }
+
+    specialEnv() {
+        const env = {
+            NO_COLOR: "1"
+        }
+    }
 }
 module.exports = Apt

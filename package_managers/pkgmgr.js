@@ -14,6 +14,10 @@ class PkgMgr {
     osSupported () {
         throw new Error('a package manager should tell which OS it supports')
     }
+
+    specialEnv() {
+        return ''
+    }
 }
 
 module.exports = PkgMgr

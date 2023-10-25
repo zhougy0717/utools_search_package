@@ -5,8 +5,8 @@ class Dnf extends PkgMgr {
         super()
         this.SUBCMDS = {
             install: ['install'],
-            search: ['search'],
-            list: ['list', '--installed'],
+            search: ['search', '--color', '0'],
+            list: ['list', '--installed', '--color', '0'],
             remove: ['remove']
         }
     }
@@ -25,14 +25,9 @@ class Dnf extends PkgMgr {
         return /Connection to .* closed./.test(text)
     }
 
-    removeColorCode (str) {
-        return str.replace(/\x1b\[[0-9;]*[mK]/g, '');
-    }
-
     searchHandler(text) {
         let items = []
         let lines = text.split("\n")
-        text = this.removeColorCode(text)
         lines = lines.filter(x => !/^\s*$/.test(x))
         const start = this.findFirstPackage(lines)
         if (start === -1) {
