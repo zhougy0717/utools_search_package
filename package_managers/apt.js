@@ -11,10 +11,6 @@ class Apt extends PkgMgr {
         }
     }
 
-    removeColorCode (str) {
-        return str.replace(/\x1b\[[0-9;]*[mK]/g, '');
-    }
-
     isPkgLine(line) {
         const words = line.split(' ')
         if (words.length == 3) {
@@ -25,7 +21,6 @@ class Apt extends PkgMgr {
 
     searchHandler(text) {
         let items = []
-        text = this.removeColorCode(text)
         let lines = text.split("\n")
         lines = lines.filter(x => !/^\s*$/.test(x))
 
@@ -64,10 +59,8 @@ class Apt extends PkgMgr {
         }
     }
 
-    specialEnv() {
-        const env = {
-            NO_COLOR: "1"
-        }
+    mgrCmd() {
+        return ['NO_COLOR=1', 'apt']
     }
 }
 module.exports = Apt

@@ -5,7 +5,7 @@ class SearchCmd extends ShellCmd {
     constructor(mgrCmd, args, outputCb) {
         super(mgrCmd, args, outputCb)
         const subcmdArgs = this.pkgmgr.subcmdArgs('search')
-        this.args = [mgrCmd, ...subcmdArgs, ...args]
+        this.args = [...this.pkgmgr.mgrCmd(), ...subcmdArgs, ...args]
     }
     updateResult (code, items) {
         if (code == 0) {

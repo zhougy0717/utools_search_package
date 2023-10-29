@@ -15,8 +15,8 @@ class PkgMgr {
         throw new Error('a package manager should tell which OS it supports')
     }
 
-    specialEnv() {
-        return ''
+    mgrCmd() {
+        return [this.mgrCmd]
     }
 }
 

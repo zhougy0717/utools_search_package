@@ -87,11 +87,18 @@ class ShellCmd {
             else {
                 items = asItem(output)
             }
-            items = this.updateResult(code, items)
-            this.outputCb(items)
-            g_stateMachine.updateState('done', async() => {
-                utools.setSubInputValue('')
-            })
+            if (items.length > 0) {
+                items = this.updateResult(code, items)
+                this.outputCb(items)
+                g_stateMachine.updateState('done', async() => {
+                    utools.setSubInputValue('')
+                })
+            }
+            else {
+                g_stateMachine.updateState('reset', async() => {
+                    utools.setSubInputValue('')
+                })
+            }
             nanobar.go(100)    
         })
     }
