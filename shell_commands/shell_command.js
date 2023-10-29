@@ -89,12 +89,13 @@ class ShellCmd {
             }
             if (items.length > 0) {
                 items = this.updateResult(code, items)
-                this.outputCb(items)
+                this.outputCb(code, items)
                 g_stateMachine.updateState('done', async() => {
                     utools.setSubInputValue('')
                 })
             }
             else {
+                this.outputCb(code, [])
                 g_stateMachine.updateState('reset', async() => {
                     utools.setSubInputValue('')
                 })

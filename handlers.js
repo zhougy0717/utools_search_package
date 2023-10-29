@@ -62,9 +62,19 @@ searchHandler = (action, searchWord, callbackSetList) => {
       })
     }
 
-    updateItemCb = (outItems) => {
+    updateItemCb = (code, outItems) => {
+      if(outItems.length > 0) {
         g_items = outItems
         callbackSetList(g_items)
+        utools.setSubInput(({text}) => {
+          searchHandler({code: mgrCmd}, text, callbackSetList)
+        }, '输入字符过滤列表，输入ctrl+e可以重新搜索')
+      }
+      else {
+        utools.setSubInput(({text}) => {
+          searchHandler({code: mgrCmd}, text, callbackSetList)
+        }, '搜索软件包, 输入冒号进入命令模式')
+      }
     }
 
     mousetrap.bind('enter', async () => {
@@ -75,11 +85,14 @@ searchHandler = (action, searchWord, callbackSetList) => {
         else {
             await cmdHandler('search ' + searchWord, mgrCmd, updateItemCb)
         }
-    })
+      })
 
     mousetrap.bind('ctrl+e', async () => {
       g_stateMachine.updateState('reset', async () => {
         utools.setSubInputValue('')
+        utools.setSubInput(({text}) => {
+          searchHandler({code: mgrCmd}, text, callbackSetList)
+        }, '搜索软件包, 输入冒号进入命令模式')
         g_items = []
         callbackSetList([])
       })
@@ -108,4 +121,8 @@ selectHandler = (action, itemData) => {
     window.utools.hideMainWindow()
 }
 
-module.exports = {enterHandler, searchHandler, selectHandler}
+placeHolder = () => {
+  return '搜索软件包, 输入冒号进入命令模式'
+}
+
+module.exports = {enterHandler, searchHandler, selectHandler, placeHolder}

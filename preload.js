@@ -1,4 +1,4 @@
-const {enterHandler, searchHandler, selectHandler} = require('./handlers.js')
+const {enterHandler, searchHandler, selectHandler, placeHolder} = require('./handlers.js')
 window.exports = {
   'brew': {
     mode: 'list',
@@ -6,7 +6,7 @@ window.exports = {
       enter: enterHandler,
       search: searchHandler,
       select: selectHandler,
-      placeholder: "搜索软件包，输入ctrl+e可以重新搜索"
+      placeholder: placeHolder()
     }
   },
   'npm': {
@@ -15,7 +15,7 @@ window.exports = {
       enter: enterHandler,
       search: searchHandler,
       select: selectHandler,
-      placeholder: "搜索软件包，输入ctrl+e可以重新搜索"
+      placeholder: placeHolder()
     }
   },
   'apt': {
@@ -24,7 +24,7 @@ window.exports = {
       enter: enterHandler,
       search: searchHandler,
       select: selectHandler,
-      placeholder: "搜索软件包，输入ctrl+e可以重新搜索"
+      placeholder: placeHolder()
     }
   },
   'dnf': {
@@ -33,7 +33,7 @@ window.exports = {
       enter: enterHandler,
       search: searchHandler,
       select: selectHandler,
-      placeholder: "搜索软件包，输入ctrl+e可以重新搜索"
+      placeholder: placeHolder()
     }
   },
   'yum': {
@@ -42,7 +42,7 @@ window.exports = {
       enter: enterHandler,
       search: searchHandler,
       select: selectHandler,
-      placeholder: "搜索软件包，输入ctrl+e可以重新搜索"
+      placeholder: placeHolder()
     }
   },
   'choco': {
@@ -51,7 +51,7 @@ window.exports = {
       enter: enterHandler,
       search: searchHandler,
       select: selectHandler,
-      placeholder: "搜索软件包，输入ctrl+e可以重新搜索"
+      placeholder: placeHolder()
     }
   }
 }
