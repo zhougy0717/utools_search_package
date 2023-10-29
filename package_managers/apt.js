@@ -6,7 +6,7 @@ class Apt extends PkgMgr {
         this.SUBCMDS = {
             install: ['install'],
             search: ['search'],
-            list: ['list'],
+            list: ['list', '--installed'],
             remove: ['remove']
         }
     }
@@ -40,8 +40,28 @@ class Apt extends PkgMgr {
         return items
     }
 
+    isListedPkgLine(line) {
+        return /^.+\[installed.*\]\s*$/.test(line)
+    }
     listHandler(text) {
-        return this.searchHandler(text)
+        let items = []
+        let lines = text.split("\n")
+        lines = lines.filter(x => !/^\s*$/.test(x))
+
+        for (let i = 0; i < lines.length; i++) {
+            if (!this.isListedPkgLine(lines[i])) {
+                continue
+            }
+            const words = lines[i].split(' ')
+            const nameWords = words[0].split(',')
+            const name = nameWords[0]
+            const version = words[1]
+            items.push({
+                title: name,
+                description: `版本${version}`
+            })
+        }
+        return items
     }
 
     osSupported() {
