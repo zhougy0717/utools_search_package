@@ -10,15 +10,18 @@ cmdHandler = async (cmd, mgrCmd, outputCb) => {
     if (args[0] === 'path') {
         if (args.length < 2 || /^\s*$/.test(args[1])) {
             window.utools.showNotification('环境变量PATH = ' + process.env.PATH)
+            await g_stateMachine.updateState('reset', async () => {})
             return
         }
         const userAddedPaths = window.utools.dbStorage.getItem('userPaths') ?? []
         userAddedPaths.push(args[1])
         window.utools.dbStorage.setItem('userPaths', userAddedPaths)
         process.env.PATH = args[1] + ':' + process.env.PATH
+        await g_stateMachine.updateState('reset', async () => {})
     }
     else if (args[0] === 'state') {
         window.utools.showNotification(g_stateMachine.getState())
+        await g_stateMachine.updateState('reset', async () => {})
     }
     else if (args[0] === 'list') {
         await g_stateMachine.updateState('execute', async () => {
@@ -41,10 +44,13 @@ cmdHandler = async (cmd, mgrCmd, outputCb) => {
             else {
                 window.utools.showNotification(`ssh命令配置：\nssh ${sshArgs.join(' ')}`)
             }
+            await g_stateMachine.updateState('reset', async () => {})
             return
         }
-        const cmd = new TestSshCmd(args.slice(1))
-        cmd.doit()
+        await g_stateMachine.updateState('execute', async () => {
+            const cmd = new TestSshCmd(args.slice(1))
+            cmd.doit()
+        })
     }
 }
 
