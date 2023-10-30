@@ -1,5 +1,5 @@
 const mousetrap = require('mousetrap')
-const { cmdHandler, copyInstallCmd, copyRemoveCmd } = require('./command.js')
+const { cmdHandler, copyInstallCmd, copyRemoveCmd, cmdItems } = require('./command.js')
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 
 let g_items = []
@@ -38,13 +38,15 @@ searchHandler = (action, searchWord, callbackSetList) => {
     if (searchWord === ":" || searchWord === "：") {
       g_stateMachine.updateState('inputCmd', async (oldState, newState) => {
         // TODO: set g_items to commands items
-        callbackSetList([])
+        g_items = cmdItems()
+        callbackSetList(g_items)
       })
       return
     }
     if (/^\s*$/.test(searchWord)) {
         g_stateMachine.updateState('clearText', async (oldState, newState) => {
-          if (oldState === "command" && newState === "init") {
+          if (oldState === "cmdFiltering" && newState === "init") {
+            g_items = []
             callbackSetList([])
           }
           else {
@@ -55,8 +57,12 @@ searchHandler = (action, searchWord, callbackSetList) => {
     }
     else {
       g_stateMachine.updateState('type', async (oldState, newState) => {
+        let keyword = searchWord
+        if (oldState === 'cmdFiltering') {
+          keyword = searchWord.slice(1)
+        }
         const filtered = g_items.filter(x => {
-          return x.title.includes(searchWord)
+          return x.title.includes(keyword)
         })
         callbackSetList(filtered)
       })
@@ -118,7 +124,13 @@ selectHandler = (action, itemData) => {
         window.utools.showNotification("删除命令已复制\n" + text)
       })
     }
-    window.utools.hideMainWindow()
+    else if (itemData.action === 'cmdComplete') {
+      utools.setSubInputValue(`:${itemData.title}`)
+    }
+
+    if (itemData.action !== 'cmdComplete') {
+      window.utools.hideMainWindow()
+    }
 }
 
 placeHolder = () => {

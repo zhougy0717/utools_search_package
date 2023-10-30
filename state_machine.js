@@ -1,13 +1,14 @@
 const stateTable = {
     init: {
         execute: "executing",
-        inputCmd: "command"
+        inputCmd: "cmdFiltering"
     },
-    command: {
+    cmdFiltering: {
         execute: "executing",
-        type: "command",
+        type: "cmdFiltering",
         clearText: "init",
-        reset: "init"
+        reset: "init",
+        inputCmd: "cmdFiltering"
     },
     executing: {
         done: "filtering",
@@ -17,7 +18,7 @@ const stateTable = {
         reset: "init",
         type: "filtering",
         clearText: "filtering",
-        inputCmd: "command"
+        inputCmd: "cmdFiltering"
     }
 }
 let g_mode = "init"
