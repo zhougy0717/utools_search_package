@@ -1,6 +1,7 @@
 const mousetrap = require('mousetrap')
 const { cmdHandler, copyInstallCmd, copyRemoveCmd, cmdItems } = require('./command.js')
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
+const Context = require('./states/context.js')
 
 let g_items = []
 const g_stateMachine = require('./state_machine.js')
@@ -43,15 +44,23 @@ searchHandler = (action, searchWord, callbackSetList) => {
       })
       return
     }
+    const setItems = (items) => {
+      g_items = items
+    }
+    const getItems = () => {
+      return g_items
+    }
+    const context = new Context(setItems, getItems, action, searchWord, callbackSetList)
+    g_stateMachine.updateState('', ()=>{}, context)
     if (/^\s*$/.test(searchWord)) {
         g_stateMachine.updateState('clearText', async (oldState, newState) => {
-          if (oldState === "cmdFiltering" && newState === "init") {
-            g_items = []
-            callbackSetList([])
-          }
-          else {
+          // if (oldState === "cmdFiltering" && newState === "init") {
+          //   g_items = []
+          //   callbackSetList([])
+          // }
+          // else {
             callbackSetList(g_items)
-          }
+          // }
         })
         return
     }
@@ -85,7 +94,7 @@ searchHandler = (action, searchWord, callbackSetList) => {
 
     mousetrap.bind('enter', async () => {
         if (searchWord.startsWith(':') || searchWord.startsWith('：')) {
-            await cmdHandler(searchWord.slice(1), mgrCmd, updateItemCb)
+            await cmdHandler(searchWord.slice(1), mgrCmd, updateItemCb, context)
             utools.setSubInputValue('')
         }
         else {
@@ -103,8 +112,6 @@ searchHandler = (action, searchWord, callbackSetList) => {
         callbackSetList([])
       })
     })
-
-    
 }
 
 selectHandler = (action, itemData) => {

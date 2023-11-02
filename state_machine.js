@@ -1,3 +1,4 @@
+const CmdFiltering = require('./states/state_cmd_filtering.js')
 const stateTable = {
     init: {
         execute: "executing",
@@ -23,7 +24,15 @@ const stateTable = {
 }
 let g_mode = "init"
 let g_lastMode = "init"
-async function updateState (trigger, action) {
+async function updateState (trigger, action, context, trigger2) {
+    if (g_mode == 'cmdFiltering' && trigger == '') {
+        const oldState = g_mode
+        const state = new CmdFiltering()
+        g_mode = state.update(trigger2, context)
+        if (oldState !== g_mode) {
+            g_lastMode = oldState
+        }
+    }
     if (trigger in stateTable[g_mode]) {
         const oldState = g_mode
         g_mode = stateTable[g_mode][trigger]

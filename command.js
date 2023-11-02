@@ -4,7 +4,7 @@ const ListCmd = require('./shell_commands/list_cmd.js');
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 const TestSshCmd = require('./shell_commands/test_ssh_cmd.js');
 
-pathCmd = async (args, mgrCmd, outputCb) => {
+pathCmd = async (args, mgrCmd, outputCb, context) => {
     if (args.length < 2 || /^\s*$/.test(args[1])) {
         window.utools.showNotification('环境变量PATH = ' + process.env.PATH)
         await g_stateMachine.updateState('reset', async () => {})
@@ -14,22 +14,23 @@ pathCmd = async (args, mgrCmd, outputCb) => {
     userAddedPaths.push(args[1])
     window.utools.dbStorage.setItem('userPaths', userAddedPaths)
     process.env.PATH = args[1] + ':' + process.env.PATH
-    await g_stateMachine.updateState('reset', async () => {})
+    // await g_stateMachine.updateState('reset', async () => {})
+    await g_stateMachine.updateState('', async () => {})
 }
 
-stateCmd = async (args, mgrCmd, outputCb) => {
+stateCmd = async (args, mgrCmd, outputCb, context) => {
     window.utools.showNotification(g_stateMachine.getState())
     await g_stateMachine.updateState('reset', async () => {})
 }
 
-listCmd = async (args, mgrCmd, outputCb) => {
+listCmd = async (args, mgrCmd, outputCb, context) => {
     await g_stateMachine.updateState('execute', async () => {
         const cmd = new ListCmd(mgrCmd, [], outputCb)
         await cmd.doit()
     })
 }
 
-sshCmd = async (args, mgrCmd, outputCb) => {
+sshCmd = async (args, mgrCmd, outputCb, context) => {
     if (args.length < 2 || /^\s*$/.test(args[1])) {
         const sshArgs = window.utools.dbStorage.getItem('sshArgs') ?? []
         if (sshArgs.length === 0) {
@@ -47,7 +48,7 @@ sshCmd = async (args, mgrCmd, outputCb) => {
     })
 }
 
-searchCmd = async (args, mgrCmd, outputCb) => {
+searchCmd = async (args, mgrCmd, outputCb, context) => {
     await g_stateMachine.updateState('execute', async () => {
         const cmd = new SearchCmd(mgrCmd, args.slice(1), outputCb)
         await cmd.doit()
@@ -80,11 +81,11 @@ let g_cmds = {
     }
 }
 
-cmdHandler = async (cmd, mgrCmd, outputCb) => {
+cmdHandler = async (cmd, mgrCmd, outputCb, context) => {
     const args = cmd.split(' ')
     if (args[0] in g_cmds) {
         const cmdName = args[0]
-        await g_cmds[cmdName].handler(args, mgrCmd, outputCb)
+        await g_cmds[cmdName].handler(args, mgrCmd, outputCb, context)
     }
 }
 
