@@ -7,27 +7,23 @@ const TestSshCmd = require('./shell_commands/test_ssh_cmd.js');
 pathCmd = async (args, mgrCmd, outputCb, context) => {
     if (args.length < 2 || /^\s*$/.test(args[1])) {
         window.utools.showNotification('环境变量PATH = ' + process.env.PATH)
-        await g_stateMachine.updateState('reset', async () => {})
+        await g_stateMachine.updateState('', async () => {}, 'reset')
         return
     }
     const userAddedPaths = window.utools.dbStorage.getItem('userPaths') ?? []
     userAddedPaths.push(args[1])
     window.utools.dbStorage.setItem('userPaths', userAddedPaths)
     process.env.PATH = args[1] + ':' + process.env.PATH
-    // await g_stateMachine.updateState('reset', async () => {})
-    await g_stateMachine.updateState('', async () => {})
+    await g_stateMachine.updateState('', async () => {}, "reset")
 }
 
 stateCmd = async (args, mgrCmd, outputCb, context) => {
     window.utools.showNotification(g_stateMachine.getState())
-    await g_stateMachine.updateState('reset', async () => {})
+    await g_stateMachine.updateState('', async () => {}, 'reset')
 }
 
 listCmd = async (args, mgrCmd, outputCb, context) => {
-    await g_stateMachine.updateState('execute', async () => {
-        const cmd = new ListCmd(mgrCmd, [], outputCb)
-        await cmd.doit()
-    })
+    await g_stateMachine.updateState('', async () => {}, context, 'execute')
 }
 
 sshCmd = async (args, mgrCmd, outputCb, context) => {

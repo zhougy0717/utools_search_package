@@ -2,6 +2,7 @@ const mousetrap = require('mousetrap')
 const { cmdHandler, copyInstallCmd, copyRemoveCmd, cmdItems } = require('./command.js')
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 const Context = require('./states/context.js')
+const CmdFiltering = require('./states/state_cmd_filtering.js')
 
 let g_items = []
 const g_stateMachine = require('./state_machine.js')
@@ -28,6 +29,7 @@ enterHandler = (action, callbackSetList) => {
     }
 
     g_stateMachine.updateState('reset', async () => {})
+    g_stateMachine.setState('cmdFiltering', new CmdFiltering())
     return callbackSetList([])
 }
 
@@ -50,8 +52,26 @@ searchHandler = (action, searchWord, callbackSetList) => {
     const getItems = () => {
       return g_items
     }
-    const context = new Context(setItems, getItems, action, searchWord, callbackSetList)
-    g_stateMachine.updateState('', ()=>{}, context)
+
+    updateItemCb = (code, outItems) => {
+      if(outItems.length > 0) {
+        g_items = outItems
+        callbackSetList(g_items)
+        utools.setSubInput(({text}) => {
+          searchHandler({code: mgrCmd}, text, callbackSetList)
+        }, '输入字符过滤列表，输入ctrl+e可以重新搜索')
+      }
+      else {
+        utools.setSubInput(({text}) => {
+          searchHandler({code: mgrCmd}, text, callbackSetList)
+        }, '搜索软件包, 输入冒号进入命令模式')
+      }
+    }
+
+    const context = new Context(
+      setItems, getItems, action, 
+      searchWord, callbackSetList,updateItemCb)
+    g_stateMachine.updateState('', ()=>{}, context, 'type')
     if (/^\s*$/.test(searchWord)) {
         g_stateMachine.updateState('clearText', async (oldState, newState) => {
           // if (oldState === "cmdFiltering" && newState === "init") {
@@ -75,21 +95,6 @@ searchHandler = (action, searchWord, callbackSetList) => {
         })
         callbackSetList(filtered)
       })
-    }
-
-    updateItemCb = (code, outItems) => {
-      if(outItems.length > 0) {
-        g_items = outItems
-        callbackSetList(g_items)
-        utools.setSubInput(({text}) => {
-          searchHandler({code: mgrCmd}, text, callbackSetList)
-        }, '输入字符过滤列表，输入ctrl+e可以重新搜索')
-      }
-      else {
-        utools.setSubInput(({text}) => {
-          searchHandler({code: mgrCmd}, text, callbackSetList)
-        }, '搜索软件包, 输入冒号进入命令模式')
-      }
     }
 
     mousetrap.bind('enter', async () => {

@@ -2,7 +2,7 @@ const ShellCmd= require("./shell_command.js")
 const pkgmgrFactory = require("../package_managers/pkgmgr_factory.js")
 
 class ListCmd extends ShellCmd {
-    constructor(mgrCmd, args, outputCb) {
+    constructor(mgrCmd, args, outputCb, stm) {
         super(mgrCmd, args, outputCb)
         const subcmdArgs = this.pkgmgr.subcmdArgs('list')
         this.args = [...this.pkgmgr.mgrCmd(), ...subcmdArgs, ...args]

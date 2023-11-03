@@ -1,13 +1,20 @@
 const State = require('./state.js') 
+const ListCmd = require('../shell_commands/list_cmd.js')
 
 class CmdFiltering extends State {
     constructor() {
         super()
     }
 
-    update (trigger, context) {
+    async update (trigger, context) {
         if (trigger === 'reset') {
             return "init"
+        }
+        else if (trigger == 'execute') {
+            const mgrCmd = context.action.code
+            const cmd = new ListCmd(mgrCmd, [], context.outputCb)
+            await cmd.doit()
+            return "executing"
         }
         if (/^\s*$/.test(context.searchWord)) {
             // TODO: Move to init state

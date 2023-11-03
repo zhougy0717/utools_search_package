@@ -1,4 +1,3 @@
-const CmdFiltering = require('./states/state_cmd_filtering.js')
 const stateTable = {
     init: {
         execute: "executing",
@@ -24,11 +23,13 @@ const stateTable = {
 }
 let g_mode = "init"
 let g_lastMode = "init"
+let g_states = {}
+
 async function updateState (trigger, action, context, trigger2) {
     if (g_mode == 'cmdFiltering' && trigger == '') {
         const oldState = g_mode
-        const state = new CmdFiltering()
-        g_mode = state.update(trigger2, context)
+        const state = g_states[g_mode]
+        g_mode = await state.update(trigger2, context)
         if (oldState !== g_mode) {
             g_lastMode = oldState
         }
@@ -47,4 +48,8 @@ getState = () => {
     return g_lastMode
 }
 
-module.exports = {updateState, getState}
+setState = (name, state) => {
+    g_states[name] = state
+}
+
+module.exports = {updateState, getState, setState}
