@@ -45,10 +45,10 @@ sshCmd = async (args, mgrCmd, outputCb, context) => {
 }
 
 searchCmd = async (args, mgrCmd, outputCb, context) => {
-    await g_stateMachine.updateState('execute', async () => {
-        const cmd = new SearchCmd(mgrCmd, args.slice(1), outputCb)
-        await cmd.doit()
-    })
+    await g_stateMachine.updateState('', async () => {
+        // const cmd = new SearchCmd(mgrCmd, args.slice(1), outputCb)
+        // await cmd.doit()
+    }, context, 'execute')
 }
 
 let g_cmds = {

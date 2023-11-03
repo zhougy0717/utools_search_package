@@ -3,6 +3,7 @@ const { cmdHandler, copyInstallCmd, copyRemoveCmd, cmdItems } = require('./comma
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 const Context = require('./states/context.js')
 const CmdFiltering = require('./states/state_cmd_filtering.js')
+const Init = require('./states/init.js')
 
 let g_items = []
 const g_stateMachine = require('./state_machine.js')
@@ -30,6 +31,7 @@ enterHandler = (action, callbackSetList) => {
 
     g_stateMachine.updateState('reset', async () => {})
     g_stateMachine.setState('cmdFiltering', new CmdFiltering())
+    g_stateMachine.setState('init', new Init())
     return callbackSetList([])
 }
 
@@ -71,25 +73,16 @@ searchHandler = (action, searchWord, callbackSetList) => {
     const context = new Context(
       setItems, getItems, action, 
       searchWord, callbackSetList,updateItemCb)
-    g_stateMachine.updateState('', ()=>{}, context, 'type')
+    g_stateMachine.updateState('', ()=>{}, context, '')
     if (/^\s*$/.test(searchWord)) {
         g_stateMachine.updateState('clearText', async (oldState, newState) => {
-          // if (oldState === "cmdFiltering" && newState === "init") {
-          //   g_items = []
-          //   callbackSetList([])
-          // }
-          // else {
-            callbackSetList(g_items)
-          // }
+          callbackSetList(g_items)
         })
         return
     }
     else {
       g_stateMachine.updateState('type', async (oldState, newState) => {
         let keyword = searchWord
-        if (oldState === 'cmdFiltering') {
-          keyword = searchWord.slice(1)
-        }
         const filtered = g_items.filter(x => {
           return x.title.includes(keyword)
         })
@@ -103,7 +96,7 @@ searchHandler = (action, searchWord, callbackSetList) => {
             utools.setSubInputValue('')
         }
         else {
-            await cmdHandler('search ' + searchWord, mgrCmd, updateItemCb)
+            await cmdHandler('search ' + searchWord, mgrCmd, updateItemCb, context)
         }
       })
 
