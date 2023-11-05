@@ -7,23 +7,23 @@ const TestSshCmd = require('./shell_commands/test_ssh_cmd.js');
 pathCmd = async (args, mgrCmd, outputCb, context) => {
     if (args.length < 2 || /^\s*$/.test(args[1])) {
         window.utools.showNotification('环境变量PATH = ' + process.env.PATH)
-        await g_stateMachine.updateState('', async () => {}, 'reset')
+        await g_stateMachine.updateState('reset', context)
         return
     }
     const userAddedPaths = window.utools.dbStorage.getItem('userPaths') ?? []
     userAddedPaths.push(args[1])
     window.utools.dbStorage.setItem('userPaths', userAddedPaths)
     process.env.PATH = args[1] + ':' + process.env.PATH
-    await g_stateMachine.updateState('', async () => {}, "reset")
+    await g_stateMachine.updateState('reset', context)
 }
 
 stateCmd = async (args, mgrCmd, outputCb, context) => {
     window.utools.showNotification(g_stateMachine.getState())
-    await g_stateMachine.updateState('', async () => {}, context, 'reset')
+    await g_stateMachine.updateState('reset', context)
 }
 
 listCmd = async (args, mgrCmd, outputCb, context) => {
-    await g_stateMachine.updateState('', async () => {}, context, 'execute')
+    await g_stateMachine.updateState('execute', context)
 }
 
 sshCmd = async (args, mgrCmd, outputCb, context) => {
@@ -35,20 +35,14 @@ sshCmd = async (args, mgrCmd, outputCb, context) => {
         else {
             window.utools.showNotification(`ssh命令配置：\nssh ${sshArgs.join(' ')}`)
         }
-        await g_stateMachine.updateState('reset', async () => {})
+        await g_stateMachine.updateState('reset', context)
         return
     }
-    await g_stateMachine.updateState('execute', async () => {
-        const cmd = new TestSshCmd(args.slice(1))
-        cmd.doit()
-    })
+    await g_stateMachine.updateState('execute', context)
 }
 
 searchCmd = async (args, mgrCmd, outputCb, context) => {
-    await g_stateMachine.updateState('', async () => {
-        // const cmd = new SearchCmd(mgrCmd, args.slice(1), outputCb)
-        // await cmd.doit()
-    }, context, 'execute')
+    await g_stateMachine.updateState('execute', context)
 }
 
 let g_cmds = {

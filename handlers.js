@@ -31,7 +31,6 @@ enterHandler = (action, callbackSetList) => {
         }
     }
 
-    g_stateMachine.updateState('reset', async () => {})
     g_stateMachine.setState('cmdFiltering', new CmdFiltering())
     g_stateMachine.setState('init', new Init())
     g_stateMachine.setState('filtering', new Filtering())
@@ -43,14 +42,6 @@ searchHandler = (action, searchWord, callbackSetList) => {
     const mgrCmd = action.code
     if (!pkgmgrFactory.isSupport(mgrCmd)) {
         return
-    }
-    if (searchWord === ":" || searchWord === "：") {
-      g_stateMachine.updateState('inputCmd', async (oldState, newState) => {
-        // TODO: set g_items to commands items
-        g_items = cmdItems()
-        callbackSetList(g_items)
-      })
-      return
     }
     const setItems = (items) => {
       g_items = items
@@ -71,38 +62,19 @@ searchHandler = (action, searchWord, callbackSetList) => {
         utools.setSubInput(({text}) => {
           searchHandler({code: mgrCmd}, text, callbackSetList)
         }, '输入字符过滤列表，输入ctrl+e可以重新搜索')
-        g_stateMachine.updateState('', async() => {
-          utools.setSubInputValue('')
-        }, context, 'done')
+        g_stateMachine.updateState('done', context)
       }
       else {
         utools.setSubInput(({text}) => {
           searchHandler({code: mgrCmd}, text, callbackSetList)
         }, '搜索软件包, 输入冒号进入命令模式')
-        g_stateMachine.updateState('', async() => {
-          utools.setSubInputValue('')
-        }, context, 'reset')
+        g_stateMachine.updateState('reset', context)
       }
     }
 
     context.outputCb = updateItemCb
 
-    g_stateMachine.updateState('', ()=>{}, context, 'type')
-    if (/^\s*$/.test(searchWord)) {
-        g_stateMachine.updateState('clearText', async (oldState, newState) => {
-          callbackSetList(g_items)
-        })
-        return
-    }
-    else {
-      g_stateMachine.updateState('type', async (oldState, newState) => {
-        let keyword = searchWord
-        const filtered = g_items.filter(x => {
-          return x.title.includes(keyword)
-        })
-        callbackSetList(filtered)
-      })
-    }
+    g_stateMachine.updateState('type', context)
 
     mousetrap.bind('enter', async () => {
         if (searchWord.startsWith(':') || searchWord.startsWith('：')) {
@@ -115,14 +87,7 @@ searchHandler = (action, searchWord, callbackSetList) => {
       })
 
     mousetrap.bind('ctrl+e', async () => {
-      g_stateMachine.updateState('', async () => {
-        // utools.setSubInputValue('')
-        // utools.setSubInput(({text}) => {
-        //   searchHandler({code: mgrCmd}, text, callbackSetList)
-        // }, '搜索软件包, 输入冒号进入命令模式')
-        // g_items = []
-        // callbackSetList([])
-      }, context, 'reset')
+      g_stateMachine.updateState('reset', context)
     })
 }
 

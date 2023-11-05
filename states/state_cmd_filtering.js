@@ -13,9 +13,15 @@ class CmdFiltering extends State {
             return this.lastState
         }
         else if (trigger == 'execute') {
-            const mgrCmd = context.action.code
-            const cmd = new ListCmd(mgrCmd, [], context.outputCb)
-            await cmd.doit()
+            if (/\s*ssh .*/.test(searchWord.slice(1))) {
+                const cmd = new TestSshCmd(args.slice(1))
+                await cmd.doit()
+            }
+            else if (/\s*list .*/.test(searchWord.slice(1))) {
+                const mgrCmd = context.action.code
+                const cmd = new ListCmd(mgrCmd, [], context.outputCb)
+                await cmd.doit()
+            }
             return "executing"
         }
         if (/^\s*$/.test(context.searchWord)) {
