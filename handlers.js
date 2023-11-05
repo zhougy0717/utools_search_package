@@ -2,7 +2,8 @@ const mousetrap = require('mousetrap')
 const { cmdHandler, copyInstallCmd, copyRemoveCmd, cmdItems } = require('./command.js')
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 const Context = require('./states/context.js')
-const CmdFiltering = require('./states/state_cmd_filtering.js')
+const CmdFiltering = require('./states/cmd_filtering.js')
+const CmdFiltering2 = require('./states/cmd_filtering2.js')
 const Init = require('./states/init.js')
 const Filtering = require('./states/filtering.js')
 const Executing = require('./states/executing.js')
@@ -32,6 +33,7 @@ enterHandler = (action, callbackSetList) => {
     }
 
     g_stateMachine.setState('cmdFiltering', new CmdFiltering())
+    g_stateMachine.setState('cmdFiltering2', new CmdFiltering2())
     g_stateMachine.setState('init', new Init())
     g_stateMachine.setState('filtering', new Filtering())
     g_stateMachine.setState('executing', new Executing())
