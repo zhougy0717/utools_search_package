@@ -57,6 +57,11 @@ searchHandler = (action, searchWord, callbackSetList) => {
       return g_items
     }
 
+    const context = new Context(
+      setItems, getItems, action, 
+      searchWord, callbackSetList,updateItemCb,
+      searchHandler)
+
     updateItemCb = (code, outItems) => {
       if(outItems.length > 0) {
         g_items = outItems
@@ -64,18 +69,20 @@ searchHandler = (action, searchWord, callbackSetList) => {
         utools.setSubInput(({text}) => {
           searchHandler({code: mgrCmd}, text, callbackSetList)
         }, '输入字符过滤列表，输入ctrl+e可以重新搜索')
+        g_stateMachine.updateState('', async() => {
+          utools.setSubInputValue('')
+        })
       }
       else {
         utools.setSubInput(({text}) => {
           searchHandler({code: mgrCmd}, text, callbackSetList)
         }, '搜索软件包, 输入冒号进入命令模式')
+        g_stateMachine.updateState('reset', async() => {
+          utools.setSubInputValue('')
+        })
       }
     }
 
-    const context = new Context(
-      setItems, getItems, action, 
-      searchWord, callbackSetList,updateItemCb,
-      searchHandler)
     g_stateMachine.updateState('', ()=>{}, context, 'type')
     if (/^\s*$/.test(searchWord)) {
         g_stateMachine.updateState('clearText', async (oldState, newState) => {
