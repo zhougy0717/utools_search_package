@@ -8,6 +8,7 @@ class Context {
         this.searchWord = searchWord
         this.callbackSetList = callbackSetList
         this.outputCb = outputCb
+        this.searchHandler = searchHandler
     }
 }
 

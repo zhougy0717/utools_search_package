@@ -66,6 +66,7 @@ class ShellCmd {
                 return
             }
         }
+        // g_stateMachine.updateState('execute', async() => {})
         let cmdProc = spawn (this.args[0], this.args.slice(1))
         let progress = 10
         nanobar.go(progress)

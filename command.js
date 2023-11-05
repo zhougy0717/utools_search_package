@@ -19,7 +19,7 @@ pathCmd = async (args, mgrCmd, outputCb, context) => {
 
 stateCmd = async (args, mgrCmd, outputCb, context) => {
     window.utools.showNotification(g_stateMachine.getState())
-    await g_stateMachine.updateState('', async () => {}, 'reset')
+    await g_stateMachine.updateState('', async () => {}, context, 'reset')
 }
 
 listCmd = async (args, mgrCmd, outputCb, context) => {
