@@ -26,7 +26,7 @@ let g_lastMode = "init"
 let g_states = {}
 
 async function updateState (trigger, action, context, trigger2) {
-    if ((g_mode == 'cmdFiltering' || g_mode == 'init' || g_mode == 'filtering') && trigger == '') {
+    if ((g_mode == 'cmdFiltering' || g_mode == 'cmdFiltering2' || g_mode == 'init' || g_mode == 'filtering' || g_mode == 'executing') && trigger == '') {
         const oldState = g_mode
         const state = g_states[g_mode]
         g_mode = await state.update(trigger2, context)

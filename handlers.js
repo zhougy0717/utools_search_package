@@ -5,6 +5,7 @@ const Context = require('./states/context.js')
 const CmdFiltering = require('./states/state_cmd_filtering.js')
 const Init = require('./states/init.js')
 const Filtering = require('./states/filtering.js')
+const Executing = require('./states/executing.js')
 
 let g_items = []
 const g_stateMachine = require('./state_machine.js')
@@ -34,6 +35,7 @@ enterHandler = (action, callbackSetList) => {
     g_stateMachine.setState('cmdFiltering', new CmdFiltering())
     g_stateMachine.setState('init', new Init())
     g_stateMachine.setState('filtering', new Filtering())
+    g_stateMachine.setState('executing', new Executing())
     return callbackSetList([])
 }
 
@@ -59,7 +61,7 @@ searchHandler = (action, searchWord, callbackSetList) => {
 
     const context = new Context(
       setItems, getItems, action, 
-      searchWord, callbackSetList,updateItemCb,
+      searchWord, callbackSetList,null,
       searchHandler)
 
     updateItemCb = (code, outItems) => {
@@ -71,17 +73,19 @@ searchHandler = (action, searchWord, callbackSetList) => {
         }, '输入字符过滤列表，输入ctrl+e可以重新搜索')
         g_stateMachine.updateState('', async() => {
           utools.setSubInputValue('')
-        })
+        }, context, 'done')
       }
       else {
         utools.setSubInput(({text}) => {
           searchHandler({code: mgrCmd}, text, callbackSetList)
         }, '搜索软件包, 输入冒号进入命令模式')
-        g_stateMachine.updateState('reset', async() => {
+        g_stateMachine.updateState('', async() => {
           utools.setSubInputValue('')
-        })
+        }, context, 'reset')
       }
     }
+
+    context.outputCb = updateItemCb
 
     g_stateMachine.updateState('', ()=>{}, context, 'type')
     if (/^\s*$/.test(searchWord)) {
