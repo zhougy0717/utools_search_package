@@ -1,28 +1,5 @@
-const stateTable = {
-    init: {
-        execute: "executing",
-        inputCmd: "cmdFiltering"
-    },
-    cmdFiltering: {
-        execute: "executing",
-        type: "cmdFiltering",
-        clearText: "init",
-        reset: "init",
-        inputCmd: "cmdFiltering"
-    },
-    executing: {
-        done: "filtering",
-        reset: "init"
-    },
-    filtering: {
-        reset: "init",
-        type: "filtering",
-        clearText: "filtering",
-        inputCmd: "cmdFiltering"
-    }
-}
-let g_mode = "init"
-let g_lastMode = "init"
+let g_mode = null
+let g_lastMode = null
 let g_states = {}
 
 async function updateState (trigger, context) {
@@ -42,4 +19,11 @@ setState = (name, state) => {
     g_states[name] = state
 }
 
-module.exports = {updateState, getState, setState}
+initState = (state) => {
+    if (g_mode === null) {
+        g_mode = state
+        g_lastMode = state
+    }
+}
+
+module.exports = {updateState, getState, setState, initState}
