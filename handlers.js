@@ -33,8 +33,8 @@ enterHandler = (action, callbackSetList) => {
     }
 
     g_stateMachine.initState('init')
-    g_stateMachine.setState('cmdFiltering', new CmdFiltering())
-    g_stateMachine.setState('cmdFiltering2', new CmdFiltering2())
+    g_stateMachine.setState('cmdFiltering', new CmdFiltering('init'))
+    g_stateMachine.setState('cmdFiltering2', new CmdFiltering2('filtering'))
     g_stateMachine.setState('init', new Init())
     g_stateMachine.setState('filtering', new Filtering())
     g_stateMachine.setState('executing', new Executing())

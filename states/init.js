@@ -12,6 +12,7 @@ class Init extends State {
             // TODO: Move to cmdFiltering state
             const items = cmdItems()
             context.setItems(items)
+            context.callbackSetList(items)
             return "cmdFiltering"
         }
         if (trigger == 'execute') {

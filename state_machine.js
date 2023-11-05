@@ -1,18 +1,31 @@
-let g_mode = null
-let g_lastMode = null
+let g_mode = ""
+let g_lastMode = ""
 let g_states = {}
 
 async function updateState (trigger, context) {
     const oldState = g_mode
-    const state = g_states[g_mode]
-    g_mode = await state.update(trigger, context)
-    if (oldState !== g_mode) {
-        g_lastMode = oldState
+    if (typeof(g_mode) === 'string') {
+        const state = g_states[g_mode]
+        g_mode = await state.update(trigger, context)
+        if (oldState !== g_mode) {
+            g_lastMode = oldState
+        }
+    }
+    else {
+        g_mode = await g_mode.update(trigger, context)
+        if (!Object.is(oldState, g_mode)) {
+            g_lastMode = oldState
+        }
     }
 }
 
 getState = () => {
-    return g_lastMode
+    if (typeof(g_lastMode) === 'string') {
+        return g_lastMode
+    }
+    else {
+        return g_lastMode.name
+    }
 }
 
 setState = (name, state) => {
@@ -20,7 +33,7 @@ setState = (name, state) => {
 }
 
 initState = (state) => {
-    if (g_mode === null) {
+    if (g_mode === "") {
         g_mode = state
         g_lastMode = state
     }

@@ -1,9 +1,9 @@
 const CmdFiltering = require('./cmd_filtering.js');
 
 class CmdFiltering2 extends CmdFiltering {
-    constructor() {
+    constructor(lastState) {
         super()
-        this.lastState = 'filtering'
+        this.lastState = lastState
         this.myself = 'cmdFiltering2'
     }
 }

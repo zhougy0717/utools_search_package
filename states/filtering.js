@@ -16,11 +16,20 @@ class Filtering extends State {
             context.callbackSetList([])
             return "init"
         }
-        if (trigger == 'type' && /^\s*$/.test(context.searchWord)) {
-            // TODO: We may fall back to cmdFiltering mode
-            const items = context.getItems()
-            context.callbackSetList(items)
-            return "filtering"
+        if (trigger == 'type') {
+            if (/^\s*$/.test(context.searchWord)) {
+                // TODO: We may fall back to cmdFiltering mode
+                const items = context.getItems()
+                context.callbackSetList(items)
+                return "filtering"
+            }
+            else if (/^[:：]/.test(context.searchWord)) {
+                // TODO: Move to cmdFiltering state
+                const items = cmdItems()
+                context.setItems(items)
+                context.callbackSetList(items)
+                return "cmdFiltering2"
+            }
         }
         return "filtering"
     }
