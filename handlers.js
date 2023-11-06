@@ -8,6 +8,14 @@ const Init = require('./states/init.js')
 const Filtering = require('./states/filtering.js')
 const Executing = require('./states/executing.js')
 
+const createStateCb = {
+  'init': () => { return new Init()},
+  'cmdFiltering': () => { return new CmdFiltering()},
+  'cmdFiltering2': () => { return new CmdFiltering2()},
+  'filtering': () => { return new Filtering()},
+  'executing': () => { return new Executing()}
+}
+
 let g_items = []
 const g_stateMachine = require('./state_machine.js')
 
@@ -32,12 +40,7 @@ enterHandler = (action, callbackSetList) => {
         }
     }
 
-    g_stateMachine.initState('init')
-    g_stateMachine.setState('cmdFiltering', new CmdFiltering('init'))
-    g_stateMachine.setState('cmdFiltering2', new CmdFiltering2('filtering'))
-    g_stateMachine.setState('init', new Init())
-    g_stateMachine.setState('filtering', new Filtering())
-    g_stateMachine.setState('executing', new Executing())
+    g_stateMachine.initState(new Init())
     return callbackSetList([])
 }
 
@@ -76,7 +79,9 @@ searchHandler = (action, searchWord, callbackSetList) => {
     }
 
     context.outputCb = updateItemCb
-
+    context.createState = (stateName, ...args) => {
+      return createStateCb[stateName](...args)
+    }
     g_stateMachine.updateState('type', context)
 
     mousetrap.bind('enter', async () => {

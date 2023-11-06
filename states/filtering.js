@@ -3,6 +3,7 @@ const State = require('./state.js')
 class Filtering extends State {
     constructor () {
         super()
+        this.name = 'filtering'
     }
 
     async update (trigger, context) {
@@ -14,24 +15,24 @@ class Filtering extends State {
             }, '搜索软件包, 输入冒号进入命令模式')
             context.setItems([])
             context.callbackSetList([])
-            return "init"
+            return context.createState('init')
         }
         if (trigger == 'type') {
             if (/^\s*$/.test(context.searchWord)) {
                 // TODO: We may fall back to cmdFiltering mode
                 const items = context.getItems()
                 context.callbackSetList(items)
-                return "filtering"
+                return context.createState('filtering')
             }
             else if (/^[:：]/.test(context.searchWord)) {
                 // TODO: Move to cmdFiltering state
                 const items = cmdItems()
                 context.setItems(items)
                 context.callbackSetList(items)
-                return "cmdFiltering2"
+                return context.createState('cmdFiltering2')
             }
         }
-        return "filtering"
+        return context.createState('filtering')
     }
 }
 
