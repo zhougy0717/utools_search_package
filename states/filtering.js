@@ -29,7 +29,7 @@ class Filtering extends State {
                 const items = cmdItems()
                 context.setItems(items)
                 context.callbackSetList(items)
-                return context.createState('cmdFiltering2')
+                return context.createState('cmdFiltering', 'filtering')
             }
         }
         return context.createState('filtering')

@@ -1,16 +1,15 @@
 const mousetrap = require('mousetrap')
-const { cmdHandler, copyInstallCmd, copyRemoveCmd, cmdItems } = require('./command.js')
+const { cmdHandler, copyInstallCmd, copyRemoveCmd } = require('./command.js')
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 const Context = require('./states/context.js')
 const CmdFiltering = require('./states/cmd_filtering.js')
-const CmdFiltering2 = require('./states/cmd_filtering2.js')
 const Init = require('./states/init.js')
 const Filtering = require('./states/filtering.js')
 const Executing = require('./states/executing.js')
 
 const createStateCb = {
   'init': () => { return new Init()},
-  'cmdFiltering': () => { return new CmdFiltering()},
+  'cmdFiltering': (lastState) => { return new CmdFiltering(lastState)},
   'cmdFiltering2': () => { return new CmdFiltering2()},
   'filtering': () => { return new Filtering()},
   'executing': () => { return new Executing()}

@@ -2,7 +2,7 @@ const State = require('./state.js')
 const ListCmd = require('../shell_commands/list_cmd.js')
 
 class CmdFiltering extends State {
-    constructor() {
+    constructor(lastState) {
         super()
         this.lastState = 'init'
         this.myself = 'cmdFiltering'
