@@ -14,7 +14,7 @@ class Init extends State {
             const items = cmdItems()
             context.setItems(items)
             context.callbackSetList(items)
-            return context.createState('cmdFiltering', 'init')
+            return context.createState('cmdFiltering', 'init', [])
         }
         if (trigger == 'execute') {
             const mgrCmd = context.action.code

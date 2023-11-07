@@ -2,11 +2,11 @@ const State = require('./state.js')
 const ListCmd = require('../shell_commands/list_cmd.js')
 
 class CmdFiltering extends State {
-    constructor(lastState) {
+    constructor(lastState, oldItems) {
         super()
-        this.lastState = 'init'
-        this.myself = 'cmdFiltering'
+        this.lastState = lastState
         this.name = 'cmdFiltering'
+        this.oldItems = oldItems
     }
 
     async update (trigger, context) {
@@ -27,9 +27,9 @@ class CmdFiltering extends State {
         }
         if (/^\s*$/.test(context.searchWord)) {
             // TODO: Move to init state
-            context.setItems([])
-            context.callbackSetList([])
-            return context.createState('init')
+            context.setItems(this.oldItems)
+            context.callbackSetList(this.oldItems)
+            return context.createState(this.lastState)
         }
         else if (/^\s*ssh$/.test(context.searchWord.slice(1))) {
             // TODO: Move to ssh filtering state, currently not implemented yet

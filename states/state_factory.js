@@ -5,7 +5,7 @@ const Executing = require('./executing.js')
 
 const createStateCb = {
   'init': () => { return new Init()},
-  'cmdFiltering': (lastState) => { return new CmdFiltering(lastState)},
+  'cmdFiltering': (...args) => { return new CmdFiltering(...args)},
   'cmdFiltering2': () => { return new CmdFiltering2()},
   'filtering': () => { return new Filtering()},
   'executing': () => { return new Executing()}

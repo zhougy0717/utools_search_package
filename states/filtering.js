@@ -26,10 +26,11 @@ class Filtering extends State {
             }
             else if (/^[:：]/.test(context.searchWord)) {
                 // TODO: Move to cmdFiltering state
+                const oldItems = context.getItems()
                 const items = cmdItems()
                 context.setItems(items)
                 context.callbackSetList(items)
-                return context.createState('cmdFiltering', 'filtering')
+                return context.createState('cmdFiltering', 'filtering', oldItems)
             }
         }
         return context.createState('filtering')
