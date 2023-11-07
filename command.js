@@ -1,4 +1,4 @@
-const g_stateMachine = require('./state_machine.js')
+const g_stateMachine = require('./states/state_machine.js')
 const SearchCmd = require('./shell_commands/search_cmd.js');
 const ListCmd = require('./shell_commands/list_cmd.js');
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")

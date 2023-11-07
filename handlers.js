@@ -2,21 +2,10 @@ const mousetrap = require('mousetrap')
 const { cmdHandler, copyInstallCmd, copyRemoveCmd } = require('./command.js')
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 const Context = require('./states/context.js')
-const CmdFiltering = require('./states/cmd_filtering.js')
-const Init = require('./states/init.js')
-const Filtering = require('./states/filtering.js')
-const Executing = require('./states/executing.js')
-
-const createStateCb = {
-  'init': () => { return new Init()},
-  'cmdFiltering': (lastState) => { return new CmdFiltering(lastState)},
-  'cmdFiltering2': () => { return new CmdFiltering2()},
-  'filtering': () => { return new Filtering()},
-  'executing': () => { return new Executing()}
-}
+const { createState } = require('./states/state_factory.js')
 
 let g_items = []
-const g_stateMachine = require('./state_machine.js')
+const g_stateMachine = require('./states/state_machine.js')
 
 enterHandler = (action, callbackSetList) => {
     const mgrCmd = action.code
@@ -39,7 +28,8 @@ enterHandler = (action, callbackSetList) => {
         }
     }
 
-    g_stateMachine.initState(new Init())
+    const initState = createState('init')
+    g_stateMachine.initState(initState)
     return callbackSetList([])
 }
 
@@ -78,9 +68,7 @@ searchHandler = (action, searchWord, callbackSetList) => {
     }
 
     context.outputCb = updateItemCb
-    context.createState = (stateName, ...args) => {
-      return createStateCb[stateName](...args)
-    }
+    context.createState = createState
     g_stateMachine.updateState('type', context)
 
     mousetrap.bind('enter', async () => {
