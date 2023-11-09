@@ -9,7 +9,8 @@ class Executing extends State {
     async update (trigger, context) {
         if (trigger == 'done') {
             utools.setSubInputValue('')
-            return context.createState('filtering')
+            const state = context.createState('filtering')
+            context.changeState(state)
         }
     }
 }

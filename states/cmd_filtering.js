@@ -1,5 +1,4 @@
 const State = require('./state.js') 
-const ListCmd = require('../shell_commands/list_cmd.js')
 
 class CmdFiltering extends State {
     constructor(lastState, oldItems) {
@@ -11,37 +10,32 @@ class CmdFiltering extends State {
 
     async update (trigger, context) {
         if (trigger === 'reset') {
-            return context.createState(this.lastState)
-        }
-        else if (trigger == 'execute') {
-            if (/\s*ssh .*/.test(searchWord.slice(1))) {
-                const cmd = new TestSshCmd(args.slice(1))
-                await cmd.doit()
-            }
-            else if (/\s*list .*/.test(searchWord.slice(1))) {
-                const mgrCmd = context.action.code
-                const cmd = new ListCmd(mgrCmd, [], context.outputCb)
-                await cmd.doit()
-            }
-            return context.createState('executing')
-        }
-        if (/^\s*$/.test(context.searchWord)) {
-            // TODO: Move to init state
             context.setItems(this.oldItems)
             context.callbackSetList(this.oldItems)
-            return context.createState(this.lastState)
+            const state = context.createState(this.lastState)
+            context.changeState(state)
         }
-        else if (/^\s*ssh$/.test(context.searchWord.slice(1))) {
-            // TODO: Move to ssh filtering state, currently not implemented yet
-            return this
+        else if (trigger == 'execute') {
+            const state =  context.createState('executing')
+            context.changeState(state)
         }
-        else {
-            // TODO: Move to itself
-            const filtered = context.getItems().filter(x => {
-                return x.title.includes(context.searchWord.slice(1))
-            })
-            context.callbackSetList(filtered)
-            return this
+        if (trigger === 'type') {
+            if (/^\s*$/.test(context.searchWord)) {
+                context.setItems(this.oldItems)
+                context.callbackSetList(this.oldItems)
+                const state = context.createState(this.lastState)
+                context.changeState(state)
+            }
+            else if (/^\s*ssh$/.test(context.searchWord.slice(1))) {
+                // TODO: Move to ssh filtering state, currently not implemented yet
+            }
+            else {
+                // TODO: Move to itself
+                const filtered = context.getItems().filter(x => {
+                    return x.title.includes(context.searchWord.slice(1))
+                })
+                context.callbackSetList(filtered)
+            }
         }
     }
 }

@@ -23,7 +23,10 @@ stateCmd = async (args, mgrCmd, outputCb, context) => {
 }
 
 listCmd = async (args, mgrCmd, outputCb, context) => {
+    const cmd = new ListCmd(mgrCmd, [], context.outputCb)
     await g_stateMachine.updateState('execute', context)
+    await cmd.doit()
+    utools.setSubInputValue(':')
 }
 
 sshCmd = async (args, mgrCmd, outputCb, context) => {
@@ -38,7 +41,9 @@ sshCmd = async (args, mgrCmd, outputCb, context) => {
         await g_stateMachine.updateState('reset', context)
         return
     }
+    const cmd = new TestSshCmd(args.slice(1))
     await g_stateMachine.updateState('execute', context)
+    await cmd.doit()
 }
 
 searchCmd = async (args, mgrCmd, outputCb, context) => {

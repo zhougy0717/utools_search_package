@@ -14,14 +14,16 @@ class Init extends State {
             const items = cmdItems()
             context.setItems(items)
             context.callbackSetList(items)
-            return context.createState('cmdFiltering', 'init', [])
+            const state = context.createState('cmdFiltering', 'init', [])
+            context.changeState(state)
         }
         if (trigger == 'execute') {
             const mgrCmd = context.action.code
             const args = context.searchWord.split(' ')
             const cmd = new SearchCmd(mgrCmd, args, context.outputCb)
             cmd.doit()
-            return context.createState('executing')
+            const state = context.createState('executing')
+            context.changeState(state)
         }
         return this
     }

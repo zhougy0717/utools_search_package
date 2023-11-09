@@ -1,9 +1,13 @@
 let g_mode = ""
 let g_lastMode = ""
 
+changeState = (state) => {
+    g_mode = state
+}
 async function updateState (trigger, context) {
     const oldState = g_mode
-    g_mode = await g_mode.update(trigger, context)
+    context.changeState = changeState
+    await g_mode.update(trigger, context)
     if (!Object.is(oldState, g_mode)) {
         g_lastMode = oldState
     }

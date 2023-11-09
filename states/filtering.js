@@ -15,25 +15,22 @@ class Filtering extends State {
             }, '搜索软件包, 输入冒号进入命令模式')
             context.setItems([])
             context.callbackSetList([])
-            return context.createState('init')
+            const state = context.createState('init')
+            context.changeState(state)
         }
         if (trigger == 'type') {
             if (/^\s*$/.test(context.searchWord)) {
-                // TODO: We may fall back to cmdFiltering mode
                 const items = context.getItems()
                 context.callbackSetList(items)
-                return context.createState('filtering')
             }
-            else if (/^[:：]/.test(context.searchWord)) {
-                // TODO: Move to cmdFiltering state
-                const oldItems = context.getItems()
-                const items = cmdItems()
-                context.setItems(items)
-                context.callbackSetList(items)
-                return context.createState('cmdFiltering', 'filtering', oldItems)
+            else {
+                const filtered = context.getItems().filter(x => {
+                    return x.title.includes(context.searchWord)
+                })
+                context.callbackSetList(filtered)
             }
         }
-        return context.createState('filtering')
+        return this
     }
 }
 
