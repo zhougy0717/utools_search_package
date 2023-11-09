@@ -1,5 +1,4 @@
 const g_stateMachine = require('./states/state_machine.js')
-const SearchCmd = require('./shell_commands/search_cmd.js');
 const ListCmd = require('./shell_commands/list_cmd.js');
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 const TestSshCmd = require('./shell_commands/test_ssh_cmd.js');
@@ -81,6 +80,7 @@ cmdHandler = async (cmd, mgrCmd, outputCb, context) => {
     if (args[0] in g_cmds) {
         const cmdName = args[0]
         await g_cmds[cmdName].handler(args, mgrCmd, outputCb, context)
+        utools.setSubInputValue('')
     }
 }
 

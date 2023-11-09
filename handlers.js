@@ -1,5 +1,5 @@
 const mousetrap = require('mousetrap')
-const { cmdHandler, copyInstallCmd, copyRemoveCmd } = require('./command.js')
+const { copyInstallCmd, copyRemoveCmd } = require('./command.js')
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 const Context = require('./states/context.js')
 const { createState } = require('./states/state_factory.js')
@@ -72,14 +72,8 @@ searchHandler = (action, searchWord, callbackSetList) => {
     g_stateMachine.updateState('type', context)
 
     mousetrap.bind('enter', async () => {
-        if (searchWord.startsWith(':') || searchWord.startsWith('：')) {
-            await cmdHandler(searchWord.slice(1), mgrCmd, updateItemCb, context)
-            utools.setSubInputValue('')
-        }
-        else {
-            await cmdHandler('search ' + searchWord, mgrCmd, updateItemCb, context)
-        }
-      })
+      g_stateMachine.updateState('command', context)
+    })
 
     mousetrap.bind('ctrl+e', async () => {
       g_stateMachine.updateState('reset', context)

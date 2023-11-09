@@ -1,6 +1,6 @@
 const State = require('./state.js') 
 const SearchCmd = require('../shell_commands/search_cmd.js')
-const { cmdItems } = require('../command.js')
+const { cmdItems, cmdHandler } = require('../command.js')
 
 class Init extends State {
     constructor() {
@@ -25,7 +25,12 @@ class Init extends State {
             const state = context.createState('executing')
             context.changeState(state)
         }
-        return this
+        if (trigger == 'command') {
+            const cmd = 'search ' + context.searchWord
+            const mgrCmd = context.action.code
+            const updateItemCb = context.outputCb
+            await cmdHandler(cmd, mgrCmd, updateItemCb, context)
+        }
     }
 }
 

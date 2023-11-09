@@ -1,4 +1,5 @@
 const State = require('./state.js') 
+const { cmdHandler } = require('../command.js')
 
 class CmdFiltering extends State {
     constructor(lastState, oldItems) {
@@ -18,6 +19,11 @@ class CmdFiltering extends State {
         else if (trigger == 'execute') {
             const state =  context.createState('executing')
             context.changeState(state)
+        }
+        else if (trigger == 'command') {
+            const mgrCmd = context.action.code
+            const updateItemCb = context.outputCb
+            await cmdHandler(context.searchWord.slice(1), mgrCmd, updateItemCb, context)
         }
         if (trigger === 'type') {
             if (/^\s*$/.test(context.searchWord)) {
