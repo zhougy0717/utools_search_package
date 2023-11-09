@@ -51,7 +51,7 @@
         "code": "yum",
         "explain": "搜索软件包",
         "cmds": [
-        "dnf"
+        "yum"
         ]
     }]
   }
