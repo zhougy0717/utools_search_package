@@ -3,7 +3,7 @@ const ListCmd = require('./shell_commands/list_cmd.js');
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 const TestSshCmd = require('./shell_commands/test_ssh_cmd.js');
 
-pathCmd = async (args, mgrCmd, outputCb, context) => {
+pathCmd = async (args, context) => {
     if (args.length < 2 || /^\s*$/.test(args[1])) {
         window.utools.showNotification('环境变量PATH = ' + process.env.PATH)
         await g_stateMachine.updateState('reset', context)
@@ -16,19 +16,20 @@ pathCmd = async (args, mgrCmd, outputCb, context) => {
     await g_stateMachine.updateState('reset', context)
 }
 
-stateCmd = async (args, mgrCmd, outputCb, context) => {
+stateCmd = async (args, context) => {
     window.utools.showNotification(g_stateMachine.getState())
     await g_stateMachine.updateState('reset', context)
 }
 
-listCmd = async (args, mgrCmd, outputCb, context) => {
+listCmd = async (args, context) => {
+    const mgrCmd = context.action.code
     const cmd = new ListCmd(mgrCmd, [], context.outputCb)
     await g_stateMachine.updateState('execute', context)
     await cmd.doit()
     utools.setSubInputValue(':')
 }
 
-sshCmd = async (args, mgrCmd, outputCb, context) => {
+sshCmd = async (args, context) => {
     if (args.length < 2 || /^\s*$/.test(args[1])) {
         const sshArgs = window.utools.dbStorage.getItem('sshArgs') ?? []
         if (sshArgs.length === 0) {
@@ -45,7 +46,7 @@ sshCmd = async (args, mgrCmd, outputCb, context) => {
     await cmd.doit()
 }
 
-searchCmd = async (args, mgrCmd, outputCb, context) => {
+searchCmd = async (args, context) => {
     await g_stateMachine.updateState('execute', context)
 }
 
@@ -79,7 +80,7 @@ cmdHandler = async (cmd, mgrCmd, outputCb, context) => {
     const args = cmd.split(' ')
     if (args[0] in g_cmds) {
         const cmdName = args[0]
-        await g_cmds[cmdName].handler(args, mgrCmd, outputCb, context)
+        await g_cmds[cmdName].handler(args, context)
         utools.setSubInputValue('')
     }
 }
