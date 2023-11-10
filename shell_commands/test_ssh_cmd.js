@@ -16,6 +16,14 @@ class TestSshCmd extends ShellCmd {
         this.args = args
     }
 
+    pushRecord(sshArgs){
+        let sshRecords = window.utools.dbStorage.getItem('sshRecords')  ?? []
+        if (sshRecords.length > 10) {
+            sshRecords.pop()
+        }
+        sshRecords.unshift(sshArgs)
+        window.utools.dbStorage.setItem('sshRecords', sshRecords)  
+    }
     doit() {
         const nanobar = this.initBar()
         const sshArgs = ['ssh', '-tt', '-p', this.port, this.server]
@@ -33,7 +41,7 @@ class TestSshCmd extends ShellCmd {
         })
         cmdProc.on('close', (code) => {
             if (code == 0) {
-                window.utools.dbStorage.setItem('sshArgs', sshArgs)  
+                this.pushRecord(sshArgs)
                 window.utools.showNotification(`测试连接成功: ${this.server}:${this.port}`)
             }
             else {

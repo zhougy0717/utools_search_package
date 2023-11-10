@@ -31,12 +31,12 @@ listCmd = async (args, context) => {
 
 sshCmd = async (args, context) => {
     if (args.length < 2 || /^\s*$/.test(args[1])) {
-        const sshArgs = window.utools.dbStorage.getItem('sshArgs') ?? []
-        if (sshArgs.length === 0) {
+        const sshRecords = window.utools.dbStorage.getItem('sshRecords') ?? []
+        if (sshRecords.length === 0 || sshRecords[0].length === 0) {
             window.utools.showNotification(`ssh命令未配置`)
         }
         else {
-            window.utools.showNotification(`ssh命令配置：\nssh ${sshArgs.join(' ')}`)
+            window.utools.showNotification(`ssh命令配置：\nssh ${sshRecords[0].join(' ')}`)
         }
         await g_stateMachine.updateState('reset', context)
         return

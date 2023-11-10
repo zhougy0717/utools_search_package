@@ -29,11 +29,11 @@ class ShellCmd {
     }
 
     addSshArgs() {
-        const sshArgs = window.utools.dbStorage.getItem('sshArgs') ?? []
-        if (sshArgs.length === 0) {
+        const sshRecords = window.utools.dbStorage.getItem('sshRecords') ?? []
+        if (sshRecords.length === 0 || sshRecords[0].length === 0) {
             return false
         }
-        this.args = [...sshArgs, ...this.args]
+        this.args = [...sshRecords[0], ...this.args]
         return true
     }
 
