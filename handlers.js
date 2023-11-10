@@ -78,6 +78,10 @@ searchHandler = (action, searchWord, callbackSetList) => {
     mousetrap.bind('ctrl+e', async () => {
       g_stateMachine.updateState('reset', context)
     })
+
+    mousetrap.bind('ctrl+c', async () => {
+      g_stateMachine.updateState('kill', context)
+    })
 }
 
 selectHandler = (action, itemData) => {

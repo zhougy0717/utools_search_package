@@ -10,7 +10,6 @@ class Init extends State {
 
     async update (trigger, context) {
         if (trigger == 'type' && /^[:：]/.test(context.searchWord)) {
-            // TODO: Move to cmdFiltering state
             const items = cmdItems()
             context.setItems(items)
             context.callbackSetList(items)
@@ -21,8 +20,9 @@ class Init extends State {
             const mgrCmd = context.action.code
             const args = context.searchWord.split(' ')
             const cmd = new SearchCmd(mgrCmd, args, context.outputCb)
-            cmd.doit()
-            const state = context.createState('executing')
+            const cmdProc = cmd.doit()
+            context.cmdProc = cmdProc
+            const state = context.createState('executing', cmdProc)
             context.changeState(state)
         }
         if (trigger == 'command') {

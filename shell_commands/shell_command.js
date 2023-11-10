@@ -95,6 +95,7 @@ class ShellCmd {
             }
             nanobar.go(100)    
         })
+        return cmdProc
     }
 }
 

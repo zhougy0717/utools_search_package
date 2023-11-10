@@ -32,7 +32,7 @@ class SearchCmd extends ShellCmd {
     }
 
     doit() {
-        super.doit()
+        return super.doit()
     }
 
     handleCmdOutput(output) {
