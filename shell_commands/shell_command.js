@@ -33,7 +33,7 @@ class ShellCmd {
         if (sshArgs.length === 0) {
             return false
         }
-        this.args = ['ssh', ...sshArgs, ...this.args]
+        this.args = [...sshArgs, ...this.args]
         return true
     }
 

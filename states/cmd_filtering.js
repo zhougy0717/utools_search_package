@@ -17,7 +17,7 @@ class CmdFiltering extends State {
             context.changeState(state)
         }
         else if (trigger == 'execute') {
-            const state =  context.createState('executing')
+            const state =  context.createState('executing', context.cmdProc)
             context.changeState(state)
         }
         else if (trigger == 'command') {
