@@ -9,6 +9,7 @@ class Choco extends PkgMgr {
             list: ['list', '--detail', '--localonly'],
             remove: ['remove']
         }
+        this.mgrName = 'choco'
     }
 
     findNextTitle(lines) {

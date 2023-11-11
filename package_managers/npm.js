@@ -9,6 +9,7 @@ class Npm extends PkgMgr {
             list: ['list', '-lg'],
             remove: ['uninstall']
         }
+        this.mgrName = 'npm'
     }
     searchHandler(output) {
         const lines = output.split('\n')

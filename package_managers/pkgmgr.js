@@ -16,7 +16,7 @@ class PkgMgr {
     }
 
     mgrCmd() {
-        return [this.mgrCmd]
+        return [this.mgrName]
     }
 }
 

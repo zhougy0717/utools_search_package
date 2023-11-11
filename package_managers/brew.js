@@ -9,6 +9,7 @@ class Brew extends PkgMgr {
             list: ['list'],
             remove: ['uninstall']
         }
+        this.mgrName = 'brew'
     }
     searchHandler(text) {
         let items = []

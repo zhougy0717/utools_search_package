@@ -9,6 +9,7 @@ class Dnf extends PkgMgr {
             list: ['list', '--installed', '--color', '0'],
             remove: ['remove']
         }
+        this.mgrName = 'dnf'
     }
 
     findFirstPackage(lines) {
