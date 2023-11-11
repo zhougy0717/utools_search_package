@@ -7,6 +7,13 @@ const { createState } = require('./states/state_factory.js')
 let g_items = []
 const g_stateMachine = require('./states/state_machine.js')
 
+const setItems = (items) => {
+  g_items = items
+}
+const getItems = () => {
+  return g_items
+}
+
 enterHandler = (action, callbackSetList) => {
     const mgrCmd = action.code
     if (!pkgmgrFactory.isSupport(mgrCmd)) {
@@ -28,8 +35,15 @@ enterHandler = (action, callbackSetList) => {
         }
     }
 
+    const context = new Context(
+      setItems, getItems, action, 
+      null, callbackSetList,null,
+      null)
+    context.createState = createState
+
     const initState = createState('init')
     g_stateMachine.initState(initState)
+    g_stateMachine.updateState('reset', context)
     return callbackSetList([])
 }
 
@@ -38,13 +52,7 @@ searchHandler = (action, searchWord, callbackSetList) => {
     if (!pkgmgrFactory.isSupport(mgrCmd)) {
         return
     }
-    const setItems = (items) => {
-      g_items = items
-    }
-    const getItems = () => {
-      return g_items
-    }
-
+    
     const context = new Context(
       setItems, getItems, action, 
       searchWord, callbackSetList,null,
