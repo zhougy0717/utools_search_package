@@ -41,7 +41,7 @@ sshCmd = async (args, context) => {
         await g_stateMachine.updateState('reset', context)
         return
     }
-    const cmd = new TestSshCmd(args.slice(1), ()=>{
+    const cmd = new TestSshCmd(args, ()=>{
         g_stateMachine.updateState('reset', context)
     })
     const cmdProc = await cmd.doit()

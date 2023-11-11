@@ -4,13 +4,14 @@ const { spawn } = require('child_process');
 class TestSshCmd extends ShellCmd {
     constructor(args, callback) {
         super(null, args, callback)
-        if (args[0].includes(":")) {
-            const words = args[0].split(":")
+        const host = args[1]
+        if (host.includes(":")) {
+            const words = host.split(":")
             this.server = words[0]
             this.port = words[1]
         }
         else {
-            this.server = args[0]
+            this.server = host
             this.port = "22"
         }
         this.args = args
@@ -18,11 +19,15 @@ class TestSshCmd extends ShellCmd {
 
     pushRecord(sshArgs){
         let sshRecords = window.utools.dbStorage.getItem('sshRecords')  ?? []
-        if (sshRecords.length > 10) {
-            sshRecords.pop()
+        const filtered = sshRecords.filter(x => {
+            const text = x.join(' ')
+            return text != sshArgs.join(' ')
+        })
+        if (filtered.length > 10) {
+            filtered.pop()
         }
-        sshRecords.unshift(sshArgs)
-        window.utools.dbStorage.setItem('sshRecords', sshRecords)  
+        filtered.unshift(sshArgs)
+        window.utools.dbStorage.setItem('sshRecords', filtered)  
     }
     doit() {
         const nanobar = this.initBar()

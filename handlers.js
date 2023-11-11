@@ -102,10 +102,15 @@ selectHandler = (action, itemData) => {
       })
     }
     else if (itemData.action === 'cmdComplete') {
-      utools.setSubInputValue(`:${itemData.title}`)
+      utools.setSubInputValue(`:${itemData.title} `)
+    }
+    else if (itemData.action === 'sshComplete') {
+      utools.setSubInputValue(`:${itemData.title} `)
     }
 
-    if (itemData.action !== 'cmdComplete') {
+    if (itemData.action !== 'cmdComplete' && 
+        itemData.action !== 'sshComplete' &&
+        itemData.action !== 'none') {
       window.utools.hideMainWindow()
     }
 }
