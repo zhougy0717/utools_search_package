@@ -1,5 +1,6 @@
 const g_stateMachine = require('./states/state_machine.js')
 const ListCmd = require('./shell_commands/list_cmd.js');
+const UpgradeCmd = require('./shell_commands/upgrade_cmd.js');
 const pkgmgrFactory = require("./package_managers/pkgmgr_factory.js")
 const TestSshCmd = require('./shell_commands/test_ssh_cmd.js');
 
@@ -24,6 +25,14 @@ stateCmd = async (args, context) => {
 listCmd = async (args, context) => {
     const mgrCmd = context.action.code
     const cmd = new ListCmd(mgrCmd, [], context.outputCb)
+    const cmdProc = await cmd.doit()
+    context.cmdProc = cmdProc
+    await g_stateMachine.updateState('execute', context)
+}
+
+upgradeCmd = async (args, context) => {
+    const mgrCmd = context.action.code
+    const cmd = new UpgradeCmd(mgrCmd, [], context.outputCb)
     const cmdProc = await cmd.doit()
     context.cmdProc = cmdProc
     await g_stateMachine.updateState('execute', context)
@@ -69,6 +78,11 @@ let g_cmds = {
         description: '显示已安装包列表',
         handler: listCmd
     },
+    upgrade: {
+        title: 'upgrade',
+        description: '显示待更新包列表',
+        handler: upgradeCmd
+    },
     ssh: {
         title: 'ssh',
         description: '设置/显示ssh参数',
@@ -106,6 +120,16 @@ copyRemoveCmd = (mgrCmd, pkg, cb) => {
     const args = pkgmgr.subcmdArgs('remove')
     const removeCmd = mgrCmd + ' ' + args.join(' ') + ' ' + pkg
     cb(removeCmd)
+}
+
+copyRemoveCmd = (mgrCmd, pkg, cb) => {
+    if (!pkgmgrFactory.isSupport(mgrCmd)) {
+        return
+    }
+    const pkgmgr = pkgmgrFactory.create(mgrCmd)
+    const args = pkgmgr.subcmdArgs('update')
+    const updateCmd = mgrCmd + ' ' + args.join(' ') + ' ' + pkg
+    cb(updateCmd)
 }
 
 cmdItems = () => {

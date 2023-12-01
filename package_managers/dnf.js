@@ -7,7 +7,9 @@ class Dnf extends PkgMgr {
             install: ['install'],
             search: ['search', '--color', '0'],
             list: ['list', '--installed', '--color', '0'],
-            remove: ['remove']
+            remove: ['remove'],
+            upgrade: ['check-update'],
+            update: ['update']
         }
         this.mgrName = 'dnf'
     }

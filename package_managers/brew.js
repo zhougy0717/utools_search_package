@@ -7,7 +7,9 @@ class Brew extends PkgMgr {
             install: ['install'],
             search: ['search'],
             list: ['list'],
-            remove: ['uninstall']
+            remove: ['uninstall'],
+            upgrade: ['outdated'],
+            update: ['upgrade']
         }
         this.mgrName = 'brew'
     }

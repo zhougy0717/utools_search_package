@@ -7,7 +7,9 @@ class Npm extends PkgMgr {
             install: ['install', '-g'],
             search: ['search', '--parseable'],
             list: ['list', '-lg'],
-            remove: ['uninstall']
+            remove: ['uninstall'],
+            upgrade: ['outdated'],
+            update: ['update', '-g']
         }
         this.mgrName = 'npm'
     }

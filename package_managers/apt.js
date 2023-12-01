@@ -7,7 +7,9 @@ class Apt extends PkgMgr {
             install: ['install'],
             search: ['search'],
             list: ['list', '--installed'],
-            remove: ['remove']
+            remove: ['remove'],
+            upgrade: ['list', '--upgradable'],
+            update: ['upgrade']
         }
     }
 
@@ -41,7 +43,7 @@ class Apt extends PkgMgr {
     }
 
     isListedPkgLine(line) {
-        return /^.+\[installed.*\]\s*$/.test(line)
+        return /^.+\[[installed|upgradable].*\]\s*$/.test(line)
     }
     listHandler(text) {
         let items = []
