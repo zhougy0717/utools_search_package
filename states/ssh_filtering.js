@@ -25,7 +25,7 @@ class SshFiltering extends State {
                 context.callbackSetList(filtered)
             }
         }
-        if (trigger === 'command') {
+        if (trigger === 'doCommand') {
             const mgrCmd = context.action.code
             const updateItemCb = context.outputCb
             await cmdHandler(context.searchWord.slice(1), mgrCmd, updateItemCb, context)

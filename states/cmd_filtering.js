@@ -49,7 +49,7 @@ class CmdFiltering extends State {
             const state =  context.createState('executing', context.cmdProc)
             context.changeState(state)
         }
-        else if (trigger == 'command') {
+        else if (trigger == 'doCommand') {
             const mgrCmd = context.action.code
             const updateItemCb = context.outputCb
             await cmdHandler(context.searchWord.slice(1), mgrCmd, updateItemCb, context)

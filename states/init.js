@@ -25,7 +25,7 @@ class Init extends State {
             const state = context.createState('executing', cmdProc)
             context.changeState(state)
         }
-        if (trigger == 'command') {
+        if (trigger == 'doSearch') {
             const cmd = 'search ' + context.searchWord
             const mgrCmd = context.action.code
             const updateItemCb = context.outputCb

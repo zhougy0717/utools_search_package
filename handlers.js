@@ -64,7 +64,7 @@ searchHandler = (action, searchWord, callbackSetList) => {
         callbackSetList(g_items)
         utools.setSubInput(({text}) => {
           searchHandler({code: mgrCmd}, text, callbackSetList)
-        }, '输入字符过滤列表，输入ctrl+e可以重新搜索')
+        }, '输入字符过滤列表，输入ctrl+r可以重新搜索')
         g_stateMachine.updateState('done', context)
       }
       else {
@@ -80,15 +80,19 @@ searchHandler = (action, searchWord, callbackSetList) => {
     g_stateMachine.updateState('type', context)
 
     mousetrap.bind('enter', async () => {
-      g_stateMachine.updateState('command', context)
+      g_stateMachine.updateState('doSearch', context)
     })
 
-    mousetrap.bind('ctrl+e', async () => {
+    mousetrap.bind('ctrl+r', async () => {
       g_stateMachine.updateState('reset', context)
     })
 
     mousetrap.bind('ctrl+c', async () => {
       g_stateMachine.updateState('kill', context)
+    })
+
+    mousetrap.bind('ctrl+e', async () => {
+      g_stateMachine.updateState('doCommand', context)
     })
 }
 
