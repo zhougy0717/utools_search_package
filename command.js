@@ -25,7 +25,10 @@ stateCmd = async (args, context) => {
 listCmd = async (args, context) => {
     const mgrCmd = context.action.code
     const cmd = new ListCmd(mgrCmd, [], context.outputCb)
-    const cmdProc = await cmd.doit()
+    const cmdProc = cmd.doit()
+    if (cmdProc == null) {
+        return
+    }
     context.cmdProc = cmdProc
     await g_stateMachine.updateState('execute', context)
 }
@@ -33,7 +36,10 @@ listCmd = async (args, context) => {
 upgradeCmd = async (args, context) => {
     const mgrCmd = context.action.code
     const cmd = new UpgradeCmd(mgrCmd, [], context.outputCb)
-    const cmdProc = await cmd.doit()
+    const cmdProc = cmd.doit()
+    if (cmdProc == null) {
+        return
+    }
     context.cmdProc = cmdProc
     await g_stateMachine.updateState('execute', context)
 }
@@ -53,7 +59,10 @@ sshCmd = async (args, context) => {
     const cmd = new TestSshCmd(args, ()=>{
         g_stateMachine.updateState('reset', context)
     })
-    const cmdProc = await cmd.doit()
+    const cmdProc = cmd.doit()
+    if (cmdProc == null) {
+        return
+    }
     context.cmdProc = cmdProc
     await g_stateMachine.updateState('execute', context)
 }

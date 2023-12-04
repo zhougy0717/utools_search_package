@@ -55,14 +55,14 @@ class ShellCmd {
         return nanobar
     }
 
-    async doit () {
+    doit () {
         let nanobar = this.initBar()
         let output = ""
         if (!this.pkgmgr.osSupported()) {
             const ret = this.addSshArgs()
             if (!ret) {
                 window.utools.showNotification(`本地不支持命令${this.mgrCmd},且ssh未配置`)
-                return
+                return null
             }
         }
         let cmdProc = spawn (this.args[0], this.args.slice(1))
