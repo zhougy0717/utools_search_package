@@ -31,7 +31,7 @@ class TestSshCmd extends ShellCmd {
     }
     doit() {
         const nanobar = this.initBar()
-        const sshArgs = ['ssh', '-tt', '-p', this.port, this.server]
+        const sshArgs = ['ssh', '-p', this.port, this.server]
         const sshCmd = [...sshArgs, 'echo hello world']
         let progress = 10
         let cmdProc = spawn (sshCmd[0], sshCmd.slice(1))
