@@ -113,6 +113,12 @@ selectHandler = (action, itemData) => {
         window.utools.showNotification("删除命令已复制\n" + text)
       })
     }
+    else if (itemData.action == 'upgrade') {
+      copyUpgradeCmd(action.code, itemData.title, (text) => {
+        utools.copyText(text);
+        window.utools.showNotification("更新命令已复制\n" + text)
+      })
+    }
     else if (itemData.action === 'cmdComplete') {
       utools.setSubInputValue(`:${itemData.title} `)
     }

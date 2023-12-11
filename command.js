@@ -131,7 +131,7 @@ copyRemoveCmd = (mgrCmd, pkg, cb) => {
     cb(removeCmd)
 }
 
-copyRemoveCmd = (mgrCmd, pkg, cb) => {
+copyUpgradeCmd = (mgrCmd, pkg, cb) => {
     if (!pkgmgrFactory.isSupport(mgrCmd)) {
         return
     }

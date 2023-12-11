@@ -7,7 +7,7 @@ class Choco extends PkgMgr {
             install: ['install', '-y'],
             search: ['search', '--detail', '--by-id-only'],
             list: ['list', '--detail', '--localonly'],
-            remove: ['remove'],
+            remove: ['uninstall'],
             upgrade: ['outdated'],
             update: ['upgrade']
         }
