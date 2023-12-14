@@ -5,8 +5,8 @@ class Choco extends PkgMgr {
         super()
         this.SUBCMDS = {
             install: ['install', '-y'],
-            search: ['search', '--detail', '--by-id-only'],
-            list: ['list', '--detail', '--localonly'],
+            search: ['search', '--detail', '--no-color'],
+            list: ['list', '--detail', '--no-color'],
             remove: ['uninstall'],
             upgrade: ['outdated'],
             update: ['upgrade']

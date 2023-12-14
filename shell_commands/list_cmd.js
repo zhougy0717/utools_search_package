@@ -31,7 +31,7 @@ class ListCmd extends ShellCmd {
     handleCmdOutput(output) {
         const pm = pkgmgrFactory.create(this.mgrCmd)
         const items = pm.listHandler(output)
-        window.utools.showNotification(`共安装${items.length - 1}个软件包`)
+        window.utools.showNotification(`共安装${items.length}个软件包`)
         return items
     }
 }
