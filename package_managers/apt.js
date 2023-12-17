@@ -84,5 +84,29 @@ class Apt extends PkgMgr {
     mgrCmd() {
         return ['NO_COLOR=1', 'apt']
     }
+
+    upgradeHandler(text) {
+        let items = []
+        let lines = text.split("\n").slice(1)
+        lines = lines.filter(x => !/^\s*$/.test(x))
+
+        lines.forEach(line => {
+            const regex = /(.*) (.*) (.*) \[.*: (.*)\]/
+            const results = regex.exec(line)
+            if (results == null) {
+                return
+            }
+            const title = results[1]
+            const oldVer = results[4] ?? "NA"
+            const newVer = results[2] ?? "NA"
+            items.push({
+                title: title,
+                description: `版本更新：${oldVer} ==> ${newVer}`,
+                cmd: `apt upgrade ${title}`,
+                action: 'copyText'
+            })
+        })
+        return items
+    }
 }
 module.exports = Apt
