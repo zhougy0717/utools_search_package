@@ -8,7 +8,7 @@ class Brew extends PkgMgr {
             search: ['search'],
             list: ['list'],
             remove: ['uninstall'],
-            upgrade: ['outdated'],
+            upgrade: ['outdated', '-v'],
             update: ['upgrade']
         }
         this.mgrName = 'brew'
@@ -31,6 +31,29 @@ class Brew extends PkgMgr {
 
     osSupported() {
         return utools.isLinux() || utools.isMacOS()
+    }
+
+    upgradeHandler(text) {
+        let items = []
+        let lines = text.split("\n")
+        const strippedLines = lines.filter(x => !/^\s*$/.test(x))
+        strippedLines.forEach(line => {
+            const regex = /(.*) \((.*)\) (<|!=) (.*)/
+            const results = regex.exec(line)
+            if (results == null) {
+                return
+            }
+            const title = results[1]
+            const oldVer = results[2] ?? "NA"
+            const newVer = results[4] ?? "NA"
+            items.push({
+                title: title,
+                description: `版本更新：${oldVer} ==> ${newVer}`,
+                cmd: `brew upgrade ${title}`,
+                action: 'copyText'
+            })
+        })
+        return items
     }
 }
 module.exports = Brew

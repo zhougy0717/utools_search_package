@@ -1,4 +1,5 @@
 const ListCmd = require('./list_cmd.js')
+const pkgmgrFactory = require("../package_managers/pkgmgr_factory.js")
 
 class UpgradeCmd extends ListCmd {
     constructor(mgrCmd, args, outputCb) {
@@ -25,6 +26,13 @@ class UpgradeCmd extends ListCmd {
             icon: 'icons/error.png'
           })
         }
+        return items
+    }
+
+    handleCmdOutput(output) {
+        const pm = pkgmgrFactory.create(this.mgrCmd)
+        const items = pm.upgradeHandler(output)
+        window.utools.showNotification(`共安装${items.length}个软件包`)
         return items
     }
 }

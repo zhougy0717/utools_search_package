@@ -125,6 +125,10 @@ selectHandler = (action, itemData) => {
     else if (itemData.action === 'sshComplete') {
       utools.setSubInputValue(`:${itemData.title} `)
     }
+    else if (itemData.action == 'copyText') {
+      utools.copyText(item.cmd);
+      window.utools.showNotification("命令已复制\n" + item.cmd)
+    }
 
     if (itemData.action !== 'cmdComplete' && 
         itemData.action !== 'sshComplete' &&

@@ -3,8 +3,12 @@ class PkgMgr {
         throw new Error('a package manager should handle search command')
     }
 
-    listHandler() {
+    listHandler(text) {
         throw new Error('a package manager should handle list command')
+    }
+
+    upgradeHandler(text) {
+        throw new Error('a package manager should handle upgrade command')
     }
 
     subcmdArgs(cmd) {
