@@ -1,5 +1,6 @@
 const PkgMgr = require('./pkgmgr.js') 
-
+const { spawn } = require('child_process');
+const VersionCmd = require('../shell_commands/version_cmd.js')
 class Brew extends PkgMgr {
     constructor() {
         super()
@@ -54,6 +55,11 @@ class Brew extends PkgMgr {
             })
         })
         return items
+    }
+
+    getVersion() {
+        const cmd = new VersionCmd(['brew', '--version'], Brew)
+        cmd.doit()
     }
 }
 module.exports = Brew

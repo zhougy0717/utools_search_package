@@ -8,7 +8,7 @@ class Npm extends PkgMgr {
             search: ['search', '--parseable'],
             list: ['list', '-lg'],
             remove: ['uninstall'],
-            upgrade: ['outdated'],
+            upgrade: ['outdated', '-g'],
             update: ['update', '-g']
         }
         this.mgrName = 'npm'
@@ -70,6 +70,30 @@ class Npm extends PkgMgr {
 
     osSupported() {
         return true
+    }
+
+    upgradeHandler(text) {
+        let items = []
+        let lines = text.split("\n")
+
+        lines.forEach(line => {
+            const regex = /(.*) (.*) (.*) (.*) (.*)/
+            const results = regex.exec(line)
+            if (results == null) {
+                return
+            }
+            const title = results[1]
+            const oldVer = results[2] ?? "NA"
+            const newVer = results[3] ?? "NA"
+            const location = results[4]
+            items.push({
+                title: title,
+                description: `版本更新：${oldVer} ==> ${newVer}, 安装位置: ${location}`,
+                cmd: `npm update ${title} -g`,
+                action: 'copyText'
+            })
+        })
+        return items
     }
 }
 module.exports = Npm

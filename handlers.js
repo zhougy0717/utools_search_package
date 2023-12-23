@@ -19,6 +19,7 @@ enterHandler = (action, callbackSetList) => {
     if (!pkgmgrFactory.isSupport(mgrCmd)) {
         return
     }
+    const mgr = pkgmgrFactory.create(mgrCmd)
     const userAddedPaths = window.utools.dbStorage.getItem('userPaths') ?? []
     if(utools.isMacOs() || utools.isLinux()) {
         process.env.PATH = '/usr/local/bin:~/bin:~/tools/bin:' + process.env.PATH
@@ -44,6 +45,7 @@ enterHandler = (action, callbackSetList) => {
     const initState = createState('init')
     g_stateMachine.initState(initState)
     g_stateMachine.updateState('reset', context)
+    mgr.init()
     return callbackSetList([])
 }
 

@@ -1,4 +1,6 @@
 const PkgMgr = require('./pkgmgr.js') 
+const Version = require('../version.js')
+const VersionCmd = require('../shell_commands/version_cmd.js')
 
 class Choco extends PkgMgr {
     constructor() {
@@ -85,6 +87,47 @@ class Choco extends PkgMgr {
 
     osSupported() {
         return utools.isWindows()
+    }
+
+    upgradeHandler(text) {
+        let items = []
+        let lines = text.split("\n")
+        lines = lines.filter(x => !/^\s*$/.test(x))
+
+        lines.forEach(line => {
+            const regex = /([^ ]*)\|([^ ]*)\|([^ ]*)\|.*/
+            const results = regex.exec(line)
+            if (results == null) {
+                return
+            }
+            const title = results[1]
+            const oldVer = results[2] ?? "NA"
+            const newVer = results[3] ?? "NA"
+            items.push({
+                title: title,
+                description: `版本更新：${oldVer} ==> ${newVer}`,
+                cmd: `choco upgrade -y ${title}`,
+                action: 'copyText'
+            })
+        })
+        return items
+    }
+
+    getVersion() {
+        const cmd = new VersionCmd(['choco', '--version'], Choco)
+        cmd.doit()
+    }
+
+    subcmdArgs(cmd) {
+        if (cmd == 'list') {
+            const ver = new Version(Choco.version??['0', '0'])
+            const v2 = new Version(['2', '0'])
+            if (ver.olderThan(v2)) {
+                let args = this.SUBCMDS['list']
+                return [...args, '--localonly']
+            }
+        }
+        return this.SUBCMDS[cmd] ?? []
     }
 }
 module.exports = Choco

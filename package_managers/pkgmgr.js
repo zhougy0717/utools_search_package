@@ -12,7 +12,7 @@ class PkgMgr {
     }
 
     subcmdArgs(cmd) {
-        return this.SUBCMDS[cmd]
+        return this.SUBCMDS[cmd] ?? []
     }
 
     osSupported () {
@@ -21,6 +21,12 @@ class PkgMgr {
 
     mgrCmd() {
         return [this.mgrName]
+    }
+
+    getVersion() {}
+
+    init() {
+        this.getVersion()
     }
 }
 
