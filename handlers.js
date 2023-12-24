@@ -21,6 +21,7 @@ enterHandler = (action, callbackSetList) => {
     }
     const mgr = pkgmgrFactory.create(mgrCmd)
     const userAddedPaths = window.utools.dbStorage.getItem('userPaths') ?? []
+    window.utools.dbStorage.setItem('origPaths', process.env.PATH)
     if(utools.isMacOs() || utools.isLinux()) {
         process.env.PATH = '/usr/local/bin:~/bin:~/tools/bin:' + process.env.PATH
         if (userAddedPaths.length > 0) {

@@ -10,6 +10,15 @@ pathCmd = async (args, context) => {
         await g_stateMachine.updateState('reset', context)
         return
     }
+    if (args[1] == 'clean') {
+        window.utools.dbStorage.setItem('userPaths', [])
+        const origPaths = window.utools.dbStorage.getItem('origPaths') ?? ''
+        if (origPaths.length > 0) {
+            process.env.PATH = origPaths
+            window.utools.showNotification('环境变量PATH = ' + process.env.PATH)
+        }
+        return
+    }
     const userAddedPaths = window.utools.dbStorage.getItem('userPaths') ?? []
     userAddedPaths.push(args[1])
     window.utools.dbStorage.setItem('userPaths', userAddedPaths)
