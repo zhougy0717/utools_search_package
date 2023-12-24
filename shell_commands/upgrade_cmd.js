@@ -9,23 +9,10 @@ class UpgradeCmd extends ListCmd {
     }
 
     updateResult (code, items) {
-        if (code == 0) {
-          items.forEach(x => {
-            x.icon = 'icons/install.png'
-            x.action = 'upgrade'
-          })
-        }
-        else {
-          items.forEach(x => {
-            x.description = "点击复制本行日志"
-            x.icon = 'icons/log.png'
-            x.action = 'copy'
-          })
-          items.unshift({
-            title:`命令错误退出, 错误码 ${code}`,
-            icon: 'icons/error.png'
-          })
-        }
+        items.forEach(x => {
+          x.icon = 'icons/install.png'
+          x.action = 'upgrade'
+        })
         return items
     }
 

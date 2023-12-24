@@ -94,5 +94,27 @@ class Dnf extends PkgMgr {
         // utools only supports Debian like Linux. No Fedora family.
         return false
     }
+
+    upgradeHandler(text) {
+        let items = []
+        let lines = text.split("\n")
+        lines = lines.filter(x => !/^\s*$/.test(x))
+
+        lines.forEach(line => {
+            const words = line.split(/\s+/)
+            if (words.length != 3) {
+                return
+            }
+            const title = words[0]
+            const newVer = words[1]
+            items.push({
+                title: title,
+                description: `版本更新至：${newVer}`,
+                cmd: `dnf update ${title}`,
+                action: 'copyText'
+            })
+        })
+        return items
+    }
 }
 module.exports = Dnf

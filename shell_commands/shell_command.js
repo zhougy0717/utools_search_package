@@ -79,11 +79,8 @@ class ShellCmd {
             nanobar.go(progress)
         })
         cmdProc.on('close', (code) => {
-            let items;
-            if (code == 0) {
-                items = this.handleCmdOutput(output)
-            }
-            else {
+            let items = this.handleCmdOutput(output)
+            if (items.length == 0 && code != 0) {
                 items = asItem(output)
             }
             if (items.length > 0) {
