@@ -101,7 +101,7 @@ class Dnf extends PkgMgr {
         lines = lines.filter(x => !/^\s*$/.test(x))
 
         lines.forEach(line => {
-            const words = line.split(/\s+/)
+            const words = line.trim().split(/\s+/)
             if (words.length != 3) {
                 return
             }
